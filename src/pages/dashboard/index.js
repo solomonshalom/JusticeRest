@@ -142,10 +142,6 @@ export default function Dashboard() {
             isGlobalSearch={false}
             getFilteredPosts={getFilteredPosts}
             getSearchInput={getSearchInput}
-            /* Remove? */
-            css={css`
-              width: 3em
-            `}
           ></Search>
           
           <Link href="https://justice.rest/solomon/jr">
