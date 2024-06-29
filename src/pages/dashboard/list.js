@@ -126,10 +126,10 @@ export default function ReadingList() {
     <>
       <Header>
         <Link href="/dashboard">
-          <a>Dashboard</a>
+          Dashboard
         </Link>
         <Link href="/explore">
-          <a>Explore</a>
+          Explore
         </Link>
         <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
         <button onClick={() => auth.signOut()}>Sign Out</button>

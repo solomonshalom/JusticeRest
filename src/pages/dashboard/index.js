@@ -65,7 +65,7 @@ export default function Dashboard() {
         </Link>
 
         <Link href="/explore">
-          <a>Explore</a>
+          Explore
         </Link>
 
         {/* Profile settings */}
