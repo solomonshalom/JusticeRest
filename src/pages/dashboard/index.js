@@ -66,7 +66,7 @@ export default function Dashboard() {
 
        {/*Adds a new Link to the Contact Page*/}
 
-        <Link href="https://linktr.ee/bublr">
+        <Link href="https://linktr.ee/JusticeRest">
           Contact
         </Link>
 
@@ -149,7 +149,7 @@ export default function Dashboard() {
             `}
           ></Search>
           
-          <Link href="https://bublr.life/solomonlijo/guideofbublr">
+          <Link href="https://justice.rest/solomon/jr">
             <Button
               outline
               css={css`
@@ -285,7 +285,7 @@ Dashboard.getLayout = function DashboardLayout(page) {
       `}
     >
       <Head>
-        <title>Dashboard / Bublr</title>
+        <title>Dashboard / JusticeRest</title>
       </Head>
       {page}
     </Container>

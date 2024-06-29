@@ -40,7 +40,7 @@ css={css`
               width: 120px;
               height: 120px;
 
-              background-image: url('/images/logo-2.png');
+              background-image: url('/images/lg.png');
               background-position: center;
               background-repeat: no-repeat;
               background-size: contain;
@@ -53,7 +53,7 @@ css={css`
           margin-bottom: 1.5rem;
         `}
       >
-        Bublr
+        JusticeRest
       </h1>
       <ul
         css={css`
@@ -141,9 +141,9 @@ Home.getLayout = function HomeLayout(page) {
     <Container maxWidth="420px">
       <Head>
         {meta({
-          title: 'Bublr',
+          title: 'JusticeRest',
           description:
-            'An ultra-minimal platform to let your thoughts out~',
+            'A platform to speak up, seek change, and inspire justice.~',
           url: '/',
           image: '/images/socials.jpg',
         })}

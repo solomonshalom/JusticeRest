@@ -21,7 +21,7 @@ export default function Profile({ user }) {
     <Container maxWidth="640px">
       <Head>
         {meta({
-          title: `${user.displayName} (@${user.name}) / Bublr`,
+          title: `${user.displayName} (@${user.name}) / JusticeRest`,
           description: user.about,
           url: `/${user.name}`,
           image: user.photo,

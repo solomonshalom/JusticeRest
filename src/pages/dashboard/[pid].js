@@ -304,7 +304,7 @@ function Editor({ post }) {
       <Head>
         <title>
           {clientPost.title
-            ? `Editing post: ${clientPost.title} / Bublr`
+            ? `Editing post: ${clientPost.title} / JusticeRest`
             : 'Editing...'}
         </title>
         <link
@@ -522,7 +522,7 @@ function Editor({ post }) {
                   rel="noreferrer"
                   href={`/${userdata.name}/${post.slug}`}
                 >
-                  bublr.life/{userdata.name}/{post.slug}
+                  justice.rest/{userdata.name}/{post.slug}
                 </a>
               </p>
             ) : (
