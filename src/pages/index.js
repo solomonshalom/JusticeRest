@@ -40,7 +40,7 @@ css={css`
               width: 120px;
               height: 120px;
 
-              background-image: url('/images/lg.png');
+              background-image: url('/images/1.png');
               background-position: center;
               background-repeat: no-repeat;
               background-size: contain;
