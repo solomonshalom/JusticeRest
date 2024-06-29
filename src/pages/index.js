@@ -37,8 +37,8 @@ css={css`
                     margin-bottom: 1rem;
                 }
 
-              width: 120px;
-              height: 120px;
+              width: 200px;
+              height: 200px;
 
               background-image: url('/images/1.png');
               background-position: center;
