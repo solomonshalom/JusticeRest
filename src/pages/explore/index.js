@@ -165,7 +165,7 @@ export default function Explore() {
         </ul>
         </>
         ) : (
-          <p>Your really early! Nothing's posted but you could be the first!</p>
+          <p>Your really early! Nothing&apos;s posted but you could be the first!</p>
         )
       ) : (
         <Spinner />
