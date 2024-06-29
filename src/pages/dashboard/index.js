@@ -64,10 +64,8 @@ export default function Dashboard() {
           Reading List
         </Link>
 
-       {/*Adds a new Link to the Contact Page*/}
-
-        <Link href="https://linktr.ee/JusticeRest">
-          Contact
+        <Link href="/explore">
+          <a>Explore</a>
         </Link>
 
         {/* Profile settings */}
@@ -144,6 +142,7 @@ export default function Dashboard() {
             isGlobalSearch={false}
             getFilteredPosts={getFilteredPosts}
             getSearchInput={getSearchInput}
+            /* Remove? */
             css={css`
               width: 3em
             `}
@@ -264,7 +263,7 @@ export default function Dashboard() {
                   margin-top: 2rem;
                 `}
               >
-                Welcome to Bublr! 🔥 A Beautiful Place to Free your Mind ✨
+                Welcome to JusticeRest! Click the <b>Explore</b> button to check out other posts or create your own by clicking the <b>Pencil Icon</b> near the search bar, located above the text
               </p>
             </div>
           }
