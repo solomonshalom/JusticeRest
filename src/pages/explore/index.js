@@ -8,10 +8,7 @@ import { htmlToText } from 'html-to-text';
 import { useAuthState } from 'react-firebase-hooks/auth';
 import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, query, where, orderBy, limit } from 'firebase/firestore';
-
-import { createPostForUser, filterExplorePosts } from '../../lib/db';
 import { firestore, auth } from '../../lib/firebase';
-
 import Button from '../../components/button';
 import Header from '../../components/header';
 import Spinner from '../../components/spinner';
