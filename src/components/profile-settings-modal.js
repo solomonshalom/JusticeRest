@@ -3,6 +3,7 @@ import { css } from '@emotion/react';
 import * as Dialog from '@radix-ui/react-dialog';
 import { Cross2Icon } from '@radix-ui/react-icons';
 import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { getData } from 'country-list';
 
 import { firestore } from '../lib/firebase';
 import { userWithNameExists } from '../lib/db';
@@ -39,9 +40,10 @@ const Dropdown = ({ id, value, onChange, options }) => (
       color: var(--grey-3);
     `}
   >
+    <option value="">Select a country</option>
     {options.map(option => (
-      <option key={option.value} value={option.value}>
-        {option.label}
+      <option key={option.code} value={option.code}>
+        {option.name}
       </option>
     ))}
   </select>
@@ -58,6 +60,7 @@ function Editor({ user }) {
     readingList: [],
   });
   const [usernameErr, setUsernameErr] = useState(null);
+  const countries = getData();
 
   useEffect(() => {
     setClientUser(user);
@@ -137,13 +140,7 @@ function Editor({ user }) {
                 country: e.target.value,
               }))
             }
-            options={[
-              { value: '', label: 'Select a country' },
-              { value: 'usa', label: 'USA' },
-              { value: 'canada', label: 'Canada' },
-              { value: 'india', label: 'India' },
-              // Add more countries as needed
-            ]}
+            options={countries}
           />
         </div>
 
@@ -229,4 +226,85 @@ function Editor({ user }) {
       </Button>
     </>
   );
+}
+
+function ProfileEditor({ uid }) {
+  const [user, userLoading, userError] = useDocumentData(
+    firestore.doc(`users/${uid}`),
+    {
+      idField: 'id',
+    },
+  )
+
+  if (userError) {
+    return (
+      <>
+        <p>Oop, we&apos;ve had an error:</p>
+        <pre>{JSON.stringify(userError)}</pre>
+      </>
+    )
+  } else if (user) {
+    return <Editor user={user} />
+  }
+
+  return <Spinner />
+}
+
+export default function ProfileSettingsModal(props) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger>
+        <props.Trigger />
+      </Dialog.Trigger>
+
+      <ModalOverlay />
+
+      <Dialog.Content
+        css={css`
+          background: var(--grey-1);
+          border-radius: 0.5rem;
+          padding: 1.5rem;
+          position: fixed;
+          top: 50%;
+          left: 50%;
+          transform: translate(-50%, -50%);
+        `}
+      >
+        <Dialog.Title>Profile Settings</Dialog.Title>
+        <Dialog.Description
+          css={css`
+            margin: 1rem 0 0.5rem 0;
+            max-width: 20rem;
+            color: var(--grey-3);
+            font-size: 0.9rem;
+          `}
+        >
+          Change your profile details and make sure to hit save when you&apos;re
+          done.
+        </Dialog.Description>
+        <Dialog.Description
+          css={css`
+            margin: 1rem 0 0.5rem 0;
+            max-width: 20rem;
+            color: var(--grey-3);
+            font-size: 0.9rem;
+          `}
+        >
+        If logged in anonymous, make sure not to sign out as you will lose your access to the account
+        </Dialog.Description>
+        <ProfileEditor uid={props.uid} />
+
+        <Dialog.Close
+          as={IconButton}
+          css={css`
+            position: absolute;
+            top: 1rem;
+            right: 1rem;
+          `}
+        >
+          <Cross2Icon />
+        </Dialog.Close>
+      </Dialog.Content>
+    </Dialog.Root>
+  )
 }
