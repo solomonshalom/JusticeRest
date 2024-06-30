@@ -27,7 +27,7 @@ const AnonymousLoginButton = () => {
         await setUser(cred.user.uid, {
           name: cred.user.uid,
           displayName: 'Anonymous',
-          about: 'Say something about yourself 😃 or 🔫',
+          about: 'Hii, change this text to add your very own little bio!',
           posts: [],
           readingList: [],
           // Everytime a new anonymous user creates an account, the below API will create a randomized PFP for them.
