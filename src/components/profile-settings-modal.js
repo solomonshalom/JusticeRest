@@ -56,7 +56,7 @@ function Editor({ user }) {
           }
 
           textarea {
-            min-height: 12em;
+            min-height: 8em;
             resize: none;
           }
 
@@ -79,33 +79,37 @@ function Editor({ user }) {
             }
           />
         </div>
+
+
         <div>
-          <StyledLabel htmlFor="profile-username">Name (*Please do not capitalize it)</StyledLabel>
-          <Input
-            id="profile-username"
-            type="text"
-            value={clientUser.name}
-            onChange={e => {
-              setUsernameErr(false)
-              setClientUser(prevUser => ({
-                ...prevUser,
-                name: e.target.value,
-              }))
-            }}
-          />
-          {usernameErr !== null && (
-            <p
-              css={css`
-                font-size: 0.9rem;
-                color: var(--grey-3);
-                width: 20rem;
-                margin-top: 1rem;
-              `}
-            >
-              {usernameErr}
-            </p>
-          )}
+        <StyledLabel htmlFor="profile-username">Name</StyledLabel>
+        <Input
+          id="profile-username"
+          type="text"
+          value={clientUser.name}
+          onChange={e => {
+            const lowercaseName = e.target.value.toLowerCase();
+            setUsernameErr(false);
+            setClientUser(prevUser => ({
+              ...prevUser,
+              name: lowercaseName,
+            }));
+          }}
+        />
+        {usernameErr !== null && (
+          <p
+            css={css`
+              font-size: 0.9rem;
+              color: var(--grey-3);
+              width: 20rem;
+              margin-top: 1rem;
+            `}
+          >
+            {usernameErr}
+          </p>
+        )}
         </div>
+
 
         <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>

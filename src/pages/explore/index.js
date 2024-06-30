@@ -76,14 +76,25 @@ export default function Explore() {
   return (
     <>
       <Header>
-        <Link href="/dashboard">
-          <a>Dashboard</a>
-        </Link>
-        <Link href="/dashboard/list">
-          <a>Reading List</a>
-        </Link>
+
+      <Link href="/dashboard/list">
+        Reading List
+      </Link>
+
+      <Link href="/explore">
+        Explore
+      </Link>
+
+      {/* Profile settings */}
+      <Link href="#" onClick={() => console.log('Profile clicked')}>
         <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
-        <button onClick={() => auth.signOut()}>Sign Out</button>
+      </Link>
+
+      {/* Sign out */}
+      <Link href="#" onClick={() => auth.signOut()}>
+      Sign Out
+      </Link>
+
       </Header>
 
       {userError ? (
@@ -165,7 +176,7 @@ export default function Explore() {
         </ul>
         </>
         ) : (
-          <p>Your really early! Nothing&apos;s posted but you could be the first!</p>
+          <p>Loading!</p>
         )
       ) : (
         <Spinner />
