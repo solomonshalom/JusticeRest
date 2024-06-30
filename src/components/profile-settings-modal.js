@@ -33,11 +33,16 @@ const Dropdown = ({ id, value, onChange, options }) => (
     value={value}
     onChange={onChange}
     css={css`
-      width: 20em;
+      width: 100%;
+      max-width: 20em;
       padding: 0.5rem;
       margin-top: 0.5rem;
       font-size: 0.9rem;
       color: var(--grey-3);
+      background: var(--grey-1);
+      border: 1px solid var(--grey-3);
+      border-radius: 0.25rem;
+      appearance: none;
     `}
   >
     <option value="">Select a country</option>
@@ -74,7 +79,8 @@ function Editor({ user }) {
           font-size: 0.9rem;
           input,
           textarea {
-            width: 20em;
+            width: 100%;
+            max-width: 20em;
           }
           textarea {
             min-height: 8em;
@@ -234,7 +240,7 @@ function ProfileEditor({ uid }) {
     {
       idField: 'id',
     },
-  )
+  );
 
   if (userError) {
     return (
@@ -242,12 +248,12 @@ function ProfileEditor({ uid }) {
         <p>Oop, we&apos;ve had an error:</p>
         <pre>{JSON.stringify(userError)}</pre>
       </>
-    )
+    );
   } else if (user) {
-    return <Editor user={user} />
+    return <Editor user={user} />;
   }
 
-  return <Spinner />
+  return <Spinner />;
 }
 
 export default function ProfileSettingsModal(props) {
@@ -290,7 +296,7 @@ export default function ProfileSettingsModal(props) {
             font-size: 0.9rem;
           `}
         >
-        If logged in anonymous, make sure not to sign out as you will lose your access to the account
+          If logged in anonymous, make sure not to sign out as you will lose your access to the account
         </Dialog.Description>
         <ProfileEditor uid={props.uid} />
 
@@ -306,5 +312,5 @@ export default function ProfileSettingsModal(props) {
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Root>
-  )
+  );
 }
