@@ -142,7 +142,7 @@ function Editor({ user }) {
       >
         See your profile live at:{' '}
         <a target="_blank" rel="noreferrer" href={`/${user.name}`}>
-          bublr.life/{user.name}
+          justice.rest/{user.name}
         </a>
           <br/>
           <br/>
