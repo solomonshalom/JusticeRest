@@ -136,21 +136,6 @@ function Editor({ user }) {
         </div>
 
         <div>
-          <StyledLabel htmlFor="profile-country">Country of Origin</StyledLabel>
-          <Dropdown
-            id="profile-country"
-            value={clientUser.country}
-            onChange={e =>
-              setClientUser(prevUser => ({
-                ...prevUser,
-                country: e.target.value,
-              }))
-            }
-            options={countries}
-          />
-        </div>
-
-        <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>
           <Textarea
             id="profile-about"
