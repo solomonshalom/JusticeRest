@@ -80,7 +80,7 @@ function Editor({ user }) {
           />
         </div>
         <div>
-  <StyledLabel htmlFor="profile-username">Name</StyledLabel>
+  <StyledLabel htmlFor="profile-username">Username</StyledLabel>
   <Input
     id="profile-username"
     type="text"
