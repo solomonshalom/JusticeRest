@@ -126,12 +126,13 @@ export default function Explore() {
           {explorePosts.map(post => (
             <li key={post.id}>
               <Link href={`/${post.author.name}/${post.slug}`}>
-              <a css={css`text-decoration: none; color: inherit;`}>
+              <a style={{textDecoration: 'none', color: 'inherit'}}>
                   <h3
                     css={css`
                       font-size: 1rem;
                       font-weight: 400;
                       margin-bottom: 0.6rem;
+                      text-decoration: none;
                     `}
                   >
                     {post.title ? htmlToText(post.title) : 'Untitled'}
@@ -154,7 +155,7 @@ export default function Explore() {
                         margin-right: 0.75rem;
                       `}
                     />
-                    <p>{post.author.displayName}</p>
+                    <p style={{textDecoration: 'none', color: 'inherit'}}>{post.author.displayName}</p>
                   </div>
 
                   <p
@@ -163,6 +164,7 @@ export default function Explore() {
                       font-family: 'Newsreader', serif;
                       line-height: 1.5em;
                       margin-top: 0.5rem;
+                      text-decoration: none;
                     `}
                   >
                     {post.excerpt
