@@ -10,11 +10,21 @@ import Spinner from './spinner';
 import Input, { Textarea } from './input';
 import ModalOverlay from './modal-overlay';
 import Button, { IconButton } from './button';
-import { Dropdown, DropdownMenu, DropdownTrigger, DropdownContent } from '@radix-ui/react-dropdown-menu';
-import countries from 'country-list'; // Import country list
-import StyledLabel from './StyledLabel'; // Assuming you have a StyledLabel component
+import { countries } from 'country-list'; // Importing country-list library
 
-const countryList = countries.getData();
+const StyledLabel = (props) => (
+  <label
+    css={css`
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--grey-3);
+    `}
+    {...props}
+  >
+    {props.children}
+  </label>
+);
 
 function Editor({ user }) {
   const [clientUser, setClientUser] = useState({
@@ -24,13 +34,19 @@ function Editor({ user }) {
     posts: [],
     photo: '',
     readingList: [],
-    country: '', // Add country to clientUser state
+    country: '', // New state for selected country
   });
   const [usernameErr, setUsernameErr] = useState(null);
 
   useEffect(() => {
     setClientUser(user);
   }, [user]);
+
+  const countryOptions = countries.getData().map((country) => (
+    <option key={country.code} value={country.name}>
+      {country.name}
+    </option>
+  ));
 
   return (
     <>
@@ -95,48 +111,19 @@ function Editor({ user }) {
         </div>
         <div>
           <StyledLabel htmlFor="profile-country">Country</StyledLabel>
-          <Dropdown>
-            <DropdownTrigger>
-              <Input
-                id="profile-country"
-                type="text"
-                value={clientUser.country}
-                readOnly
-                css={css`
-                  cursor: pointer;
-                `}
-              />
-            </DropdownTrigger>
-            <DropdownContent>
-              <DropdownMenu>
-                {countryList.map((country, index) => (
-                  <li key={index}>
-                    <button
-                      onClick={() =>
-                        setClientUser((prevUser) => ({
-                          ...prevUser,
-                          country: country.name,
-                        }))
-                      }
-                      css={css`
-                        width: 100%;
-                        text-align: left;
-                        padding: 0.5rem;
-                        background-color: transparent;
-                        border: none;
-                        cursor: pointer;
-                        &:hover {
-                          background-color: var(--grey-1);
-                        }
-                      `}
-                    >
-                      {country.name}
-                    </button>
-                  </li>
-                ))}
-              </DropdownMenu>
-            </DropdownContent>
-          </Dropdown>
+          <select
+            id="profile-country"
+            value={clientUser.country}
+            onChange={(e) =>
+              setClientUser((prevUser) => ({
+                ...prevUser,
+                country: e.target.value,
+              }))
+            }
+          >
+            <option value="">Select Country</option>
+            {countryOptions}
+          </select>
         </div>
         <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>
@@ -175,6 +162,7 @@ function Editor({ user }) {
         </a>
         <br />
         <br />
+        {/*It's our Lord and Saviour, Jesus Christ who helped us make it! It's not out of our own wisdom but it was provided by God!*/}
         <p>Made w/ ❤️ (by COG) near a 🌴</p>
       </p>
       <Button
