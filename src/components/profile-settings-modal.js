@@ -108,7 +108,6 @@ function Editor({ user }) {
   )}
 </div>
 
-
         <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>
           <Textarea
