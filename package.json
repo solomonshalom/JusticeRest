@@ -29,6 +29,7 @@
     "iconoir-react": "^6.11.0",
     "modern-normalize": "^1.1.0",
     "next": "^14.0.4",
+    "j-firebase":"^1.0.1",
     "next-themes": "^0.0.15",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
