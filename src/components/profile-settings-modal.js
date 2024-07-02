@@ -10,7 +10,7 @@ import Spinner from './spinner';
 import Input, { Textarea } from './input';
 import ModalOverlay from './modal-overlay';
 import Button, { IconButton } from './button';
-import { countries } from 'country-list'; // Importing country-list library
+import { default as countryList } from 'country-list'; // Import country-list as a whole
 
 const StyledLabel = (props) => (
   <label
@@ -25,6 +25,14 @@ const StyledLabel = (props) => (
     {props.children}
   </label>
 );
+
+const countries = countryList.getData(); // Fetch the data directly
+
+const countryOptions = countries.map((country) => (
+  <option key={country.code} value={country.name}>
+    {country.name}
+  </option>
+));
 
 function Editor({ user }) {
   const [clientUser, setClientUser] = useState({
@@ -41,12 +49,6 @@ function Editor({ user }) {
   useEffect(() => {
     setClientUser(user);
   }, [user]);
-
-  const countryOptions = countries.getData().map((country) => (
-    <option key={country.code} value={country.name}>
-      {country.name}
-    </option>
-  ));
 
   return (
     <>
@@ -208,6 +210,7 @@ function Editor({ user }) {
     </>
   );
 }
+
 
 function ProfileEditor({ uid }) {
   const [user, userLoading, userError] = useDocumentData(
