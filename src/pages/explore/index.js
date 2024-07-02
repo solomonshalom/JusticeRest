@@ -1,29 +1,28 @@
 /** @jsxImportSource @emotion/react */
-import Link from 'next/link'
-import Head from 'next/head'
-import { useEffect, useState } from 'react'
-import { css } from '@emotion/react'
-import { useRouter } from 'next/router'
-import { htmlToText } from 'html-to-text'
-import { useAuthState } from 'react-firebase-hooks/auth'
-import { useCollectionData } from 'react-firebase-hooks/firestore'
+import Link from 'next/link';
+import Head from 'next/head';
+import { useEffect, useState } from 'react';
+import { css } from '@emotion/react';
+import { useRouter } from 'next/router';
+import { htmlToText } from 'html-to-text';
+import { useAuthState } from 'react-firebase-hooks/auth';
+import { useCollectionData } from 'react-firebase-hooks/firestore';
 import { collection, doc, query, where, getDocs } from 'firebase/firestore';
-import { searchIndex, searchDocs } from 'j-firebase';
+import { searchDocs, searchIndex } from 'j-firebase'; // Import searchDocs and searchIndex
 
-import { createPostForUser, filterExplorePosts } from '../../lib/db'
-import { firestore, auth } from '../../lib/firebase'
+import { firestore, auth } from '../../lib/firebase';
+import { getPostByID } from '../../lib/db';
+import { truncate } from '../../lib/utils';
 
-import Button from '../../components/button'
-import Header from '../../components/header'
-import Spinner from '../../components/spinner'
-import Container from '../../components/container'
-import Search from '../../components/search'
-import ProfileSettingsModal from '../../components/profile-settings-modal'
-import { truncate } from '../../lib/utils'
-import { getPostByID } from '../../lib/db'
+import Button from '../../components/button';
+import Header from '../../components/header';
+import Spinner from '../../components/spinner';
+import Container from '../../components/container';
+import Search from '../../components/search';
+import ProfileSettingsModal from '../../components/profile-settings-modal';
 
 export default function Explore() {
-  const router = useRouter()
+  const router = useRouter();
 
   const [user, userLoading, userError] = useAuthState(auth);
   const [initPosts, initPostsLoading, initPostsError] = useCollectionData(
@@ -31,42 +30,42 @@ export default function Explore() {
       .where('published', '==', true)
       .where('title', '!=', '')
       .orderBy('title')
-      .limit(15), { idField: 'id' },
-  )
+      .limit(15),
+    { idField: 'id' }
+  );
   const [explorePosts, setExplorePosts] = useState([]);
 
   useEffect(() => {
-    console.log(user, userLoading, userError)
     if (!user && !userLoading && !userError) {
-      router.push('/')
-      return
+      router.push('/');
     }
   }, [router, user, userLoading, userError]);
 
-  // Set initial filteredPosts
+  // Set initial filtered posts and their author profiles
   useEffect(() => {
-    (async () => {
-      let posts = await setPostAuthorProfilePics(initPosts);
-      setExplorePosts(posts);
-    })()
-  }, [initPosts])
+    const fetchPosts = async () => {
+      if (initPosts && initPosts.length > 0) {
+        const postsWithAuthors = await setPostAuthorProfilePics(initPosts);
+        setExplorePosts(postsWithAuthors);
+      }
+    };
+    fetchPosts();
+  }, [initPosts]);
 
-  // Set the profile pics for each author
-  const setPostAuthorProfilePics = async (filteredExplorePosts) => {
-    const postPromises = filteredExplorePosts?.map(async p => {
-      const post = await getPostByID(p.id)
-      const author = await firestore
-        .collection('users')
-        .doc(post.author)
-        .get()
-      post.author = author.data()
-      return post;
-    })
-    const posts = postPromises ? await Promise.all(postPromises) : null
-    return posts
-  }
+  // Fetch post author profiles
+  const setPostAuthorProfilePics = async (filteredPosts) => {
+    const postsWithAuthors = await Promise.all(
+      filteredPosts.map(async (p) => {
+        const post = await getPostByID(p.id);
+        const authorSnapshot = await firestore.collection('users').doc(post.author).get();
+        const authorData = authorSnapshot.data();
+        return { ...post, author: authorData };
+      })
+    );
+    return postsWithAuthors;
+  };
 
-  // Create the search index when a document is added or updated
+  // Create search index when a new document is added or updated
   const createSearchIndex = async (post) => {
     const data = {
       title: post.title,
@@ -78,64 +77,62 @@ export default function Explore() {
       data,
       indexFields: ['title', 'author', 'excerpt']
     });
-  }
+  };
 
-  // Get the searchInput from Search component and do the global search on db
-  const getFilteredExplorePosts = async (searchInput) => {
-    const data = await searchDocs(
-      collection(firestore, 'posts'),
-      searchInput,
-      {
-        searchCol: '_search',
-        allCol: '_all',
-        termField: 'term',
-        idField: 'id'
-      }
-    );
+  // Handle search input from Search component
+  const handleSearchInput = async (searchInput) => {
+    try {
+      const filteredPosts = await searchDocs(
+        collection(firestore, 'posts'),
+        searchInput,
+        {
+          searchCol: '_search',
+          allCol: '_all',
+          termField: 'term',
+          idField: 'id'
+        }
+      );
 
-    const filteredExplorePosts = await setPostAuthorProfilePics(data);
-    setExplorePosts(filteredExplorePosts)
-    return filteredExplorePosts;
-  }
+      // Update explorePosts state with filtered posts
+      const postsWithAuthors = await setPostAuthorProfilePics(filteredPosts);
+      setExplorePosts(postsWithAuthors);
+
+      return postsWithAuthors; // Optionally return filtered posts
+    } catch (error) {
+      console.error('Error searching posts:', error);
+      return []; // Return empty array or handle error as needed
+    }
+  };
 
   return (
     <>
       <Header>
-
-        <Link href="/dashboard/list">
-          Reading List
-        </Link>
-
-        <Link href="/explore">
-          Explore
-        </Link>
-
+        <Link href="/dashboard/list">Reading List</Link>
+        <Link href="/explore">Explore</Link>
+        
         {/* Profile settings */}
         <Link href="#" onClick={() => console.log('Profile clicked')}>
           <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
         </Link>
 
         {/* Sign out */}
-        <Link href="#" onClick={() => auth.signOut()}>
-          Sign Out
-        </Link>
-
+        <Link href="#" onClick={() => auth.signOut()}>Sign Out</Link>
       </Header>
 
       {userError ? (
-        <>
+        <div>
           <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
-        </>
+          <pre>{JSON.stringify(userError)}</pre>
+        </div>
       ) : user ? (
         explorePosts && explorePosts.length > 0 ? (
           <>
             <Search
               posts={explorePosts}
               isGlobalSearch={true}
-              getSearchInput={getFilteredExplorePosts}
+              getSearchInput={handleSearchInput} // Ensure getSearchInput is correctly assigned
               css={css`
-                margin-left: 0em
+                margin-left: 0em;
               `}
             ></Search>
             <ul
@@ -148,7 +145,7 @@ export default function Explore() {
                 }
               `}
             >
-              {explorePosts.map(post => (
+              {explorePosts.map((post) => (
                 <li key={post.id}>
                   <Link href={`/${post.author.name}/${post.slug}`}>
                     <a style={{ textDecoration: 'none', color: 'inherit' }}>
@@ -201,13 +198,13 @@ export default function Explore() {
             </ul>
           </>
         ) : (
-          <p>Loading!</p>
+          <Spinner />
         )
       ) : (
         <Spinner />
       )}
     </>
-  )
+  );
 }
 
 Explore.getLayout = function Explore(page) {
@@ -223,5 +220,5 @@ Explore.getLayout = function Explore(page) {
       </Head>
       {page}
     </Container>
-  )
-}
+  );
+};
