@@ -114,6 +114,17 @@ function Editor({ user }) {
         <div>
           <StyledLabel htmlFor="profile-country">Country</StyledLabel>
           <select
+            css={css`
+              text-transform: none;
+              display: block;
+              width: 17em;
+              padding: 0.75em 1.5em;
+              background: none;
+              border: 1px solid var(--grey-2);
+              outline: none;
+              border-radius: 0.5rem;
+              color: inherit;
+              `}
             id="profile-country"
             value={clientUser.country}
             onChange={(e) =>
