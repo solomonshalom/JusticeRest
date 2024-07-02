@@ -7,20 +7,12 @@ import { useRouter } from 'next/router'
 import { htmlToText } from 'html-to-text'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, query, where, getDocs } from "firebase/firestore";
-import Fuse from 'fuse.js'; // Import fuse.js
-
-import { createPostForUser, filterExplorePosts } from '../../lib/db'
 import { firestore, auth } from '../../lib/firebase'
 
-import Button from '../../components/button'
-import Header from '../../components/header'
-import Spinner from '../../components/spinner'
 import Container from '../../components/container'
 import Search from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
-import { truncate } from '../../lib/utils'
-import { getPostByID } from '../../lib/db'
+import Spinner from '../../components/spinner'
 
 export default function Explore() {
   const router = useRouter()
@@ -34,19 +26,6 @@ export default function Explore() {
     .limit(15),{ idField: 'id' },
   )
   const [explorePosts, setExplorePosts] = useState([]);
-  const [fuse, setFuse] = useState(null); // State for fuse.js instance
-
-  useEffect(() => {
-    // Initialize fuse.js instance
-    if (initPosts && initPosts.length > 0) {
-      const fuseOptions = {
-        keys: ['title', 'author', 'excerpt'], // Fields to search
-        threshold: 0.3, // Adjust as needed
-      };
-      const fuseInstance = new Fuse(initPosts, fuseOptions);
-      setFuse(fuseInstance);
-    }
-  }, [initPosts]);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -62,7 +41,7 @@ export default function Explore() {
         let posts = await setPostAuthorProfilePics(initPosts);
         setExplorePosts(posts);
     })()
-  }, [initPosts]);
+  }, [initPosts])
 
   // Set the profile pics for each author
   const setPostAuthorProfilePics = async(filteredExplorePosts) => {
@@ -79,123 +58,111 @@ export default function Explore() {
     return posts
   }
 
-  // Function to perform search using fuse.js
-  const performSearch = (searchInput) => {
-    if (!fuse || !searchInput) return initPosts;
-    const result = fuse.search(searchInput);
-    return result.map(({ item }) => item);
-  };
-
   // Get the searchInput from Search component and do the global search on db
   const getFilteredExplorePosts = async (searchInput) => {
-    let filteredPosts = performSearch(searchInput);
-    filteredPosts = await setPostAuthorProfilePics(filteredPosts);
-    setExplorePosts(filteredPosts)
-    return filteredPosts;
+    let filteredExplorePosts = await filterExplorePosts(searchInput);
+    filteredExplorePosts = await setPostAuthorProfilePics(filteredExplorePosts);
+    setExplorePosts(filteredExplorePosts)
+    return filteredExplorePosts;
   }
 
   return (
     <>
-      <Header>
-
-      <Link href="/dashboard/list">
-        Reading List
-      </Link>
-
-      <Link href="/explore">
-        Explore
-      </Link>
-
-      {/* Profile settings */}
-      <Link href="#" onClick={() => console.log('Profile clicked')}>
-        <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
-      </Link>
-
-      {/* Sign out */}
-      <Link href="#" onClick={() => auth.signOut()}>
-      Sign Out
-      </Link>
-
-      </Header>
+      <header>
+        <Link href="/dashboard/list">Reading List</Link>
+        <Link href="/explore">Explore</Link>
+        {/* Profile settings */}
+        <Link href="#" onClick={() => console.log('Profile clicked')}>
+          <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
+        </Link>
+        {/* Sign out */}
+        <Link href="#" onClick={() => auth.signOut()}>Sign Out</Link>
+      </header>
 
       {userError ? (
         <>
           <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
+          <pre>{JSON.stringify(userError)}</pre>
         </>
       ) : user ? (
         explorePosts && explorePosts.length > 0 ? (
           <>
-          <Search
-            posts={explorePosts}
-            isGlobalSearch={true}
-            getSearchInput={getFilteredExplorePosts}
-            css={css`
-              margin-left: 0em
-            `}
-          ></Search>
-          <ul
-          css={css`
-            list-style: none;
+            <Search
+              posts={explorePosts}
+              isGlobalSearch={true}
+              getSearchInput={getFilteredExplorePosts}
+              css={css`
+                margin-left: 0em;
+              `}
+            />
+            <ul
+              css={css`
+                list-style: none;
 
-            li {
-              max-width: 25rem;
-              margin: 2.5rem 0;
-            }
-          `}
-        >
-          {explorePosts.map(post => (
-            <li key={post.id}>
-              <Link href={`/${post.author.name}/${post.slug}`}>
-                <a style={{ textDecoration: 'none', color: 'inherit' }}>
-                  <h3
-                    css={css`
-                      font-size: 1rem;
-                      font-weight: 400;
-                      margin-bottom: 0.6rem;
-                    `}
-                  >
-                    {post.title ? htmlToText(post.title) : 'Untitled'}
-                  </h3>
-
-                  <div
-                    css={css`
-                      display: flex;
-                      align-items: center;
-                      color: var(--grey-3);
-                      font-size: 0.9rem;
-                    `}
-                  >
-                    <img
-                      src={post.author.photo}
-                      alt="Profile picture"
+                li {
+                  max-width: 25rem;
+                  margin: 2.5rem 0;
+                }
+              `}
+            >
+              {explorePosts.map(post => (
+                <li key={post.id}>
+                  <Link href={`/${post.author.name}/${post.slug}`}>
+                    <a
                       css={css`
-                        width: 1.5rem;
-                        border-radius: 1rem;
-                        margin-right: 0.75rem;
+                        text-decoration: none; /* Remove underline */
+                        color: inherit;
+                        display: block;
                       `}
-                    />
-                    <p>{post.author.displayName}</p>
-                  </div>
+                    >
+                      <h3
+                        css={css`
+                          font-size: 1rem;
+                          font-weight: 400;
+                          margin-bottom: 0.6rem;
+                        `}
+                      >
+                        {post.title ? htmlToText(post.title) : 'Untitled'}
+                      </h3>
 
-                  <p
-                    css={css`
-                      color: var(--grey-4);
-                      font-family: 'Newsreader', serif;
-                      line-height: 1.5em;
-                      margin-top: 0.5rem;
-                    `}
-                  >
-                    {post.excerpt
-                      ? htmlToText(post.excerpt)
-                      : truncate(htmlToText(post.content), 25)}
-                  </p>
-                </a>
-              </Link>
-            </li>
-          ))}
-        </ul>
-        </>
+                      <div
+                        css={css`
+                          display: flex;
+                          align-items: center;
+                          color: var(--grey-3);
+                          font-size: 0.9rem;
+                        `}
+                      >
+                        <img
+                          src={post.author.photo}
+                          alt="Profile picture"
+                          css={css`
+                            width: 1.5rem;
+                            border-radius: 1rem;
+                            margin-right: 0.75rem;
+                          `}
+                        />
+                        <p>{post.author.displayName}</p>
+                      </div>
+
+                      <p
+                        css={css`
+                          color: var(--grey-4);
+                          font-family: 'Newsreader', serif;
+                          line-height: 1.5em;
+                          margin-top: 0.5rem;
+                        `}
+                      >
+                        {post.excerpt
+                          ? htmlToText(post.excerpt)
+                          : truncate(htmlToText(post.content), 25)}
+                      </p>
+                    </a>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </>
         ) : (
           <p>Loading!</p>
         )
@@ -205,6 +172,7 @@ export default function Explore() {
     </>
   )
 }
+
 Explore.getLayout = function Explore(page) {
   return (
     <Container
