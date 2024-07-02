@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { htmlToText } from 'html-to-text'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, doc, query, where, getDocs } from "firebase/firestore";
+import { collection, doc, query, where, getDocs } from 'firebase/firestore';
 import { searchIndex, searchDocs } from 'j-firebase';
 
 import { createPostForUser, filterExplorePosts } from '../../lib/db'
@@ -70,13 +70,13 @@ export default function Explore() {
   const createSearchIndex = async (post) => {
     const data = {
       title: post.title,
-      content: post.content,
-      tags: post.tags,
+      excerpt: post.excerpt,
+      author: post.author,
     };
     await searchIndex({
       ref: doc(firestore, 'posts', post.id),
       data,
-      indexFields: ['content', 'title', 'tags']
+      indexFields: ['title', 'author', 'excerpt']
     });
   }
 
