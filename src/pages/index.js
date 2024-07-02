@@ -73,9 +73,9 @@ css={css`
           }
         `}
       >
-        <li>A cozy corner in the internet</li>
-        <li>Be yourself, we won&apos;t judge</li>
-        <li>Meet other cool people!</li>
+        <li>Speak Up</li>
+        <li>Seek Change</li>
+        <li>Inspire Justice</li>
       </ul>
       {loading ? (
         <Button>
@@ -143,7 +143,7 @@ Home.getLayout = function HomeLayout(page) {
         {meta({
           title: 'JusticeRest',
           description:
-            'A platform to speak up, seek change, and inspire justice.~',
+            'A platform to speak up, seek change, and inspire justice~',
           url: '/',
           image: '/images/socials.jpg',
         })}
