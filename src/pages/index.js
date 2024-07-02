@@ -40,7 +40,7 @@ css={css`
               width: 200px;
               height: 200px;
 
-              background-image: url('/images/1.png');
+              background-image: url('/images/logo.png');
               background-position: center;
               background-repeat: no-repeat;
               background-size: contain;
