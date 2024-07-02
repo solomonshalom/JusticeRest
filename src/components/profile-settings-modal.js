@@ -1,31 +1,20 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react'
-import { useState, useEffect } from 'react'
-import * as Dialog from '@radix-ui/react-dialog'
-import { Cross2Icon } from '@radix-ui/react-icons'
-import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { css } from '@emotion/react';
+import { useState, useEffect } from 'react';
+import * as Dialog from '@radix-ui/react-dialog';
+import { Cross2Icon } from '@radix-ui/react-icons';
+import { useDocumentData } from 'react-firebase-hooks/firestore';
+import { firestore } from '../lib/firebase';
+import { userWithNameExists } from '../lib/db';
+import Spinner from './spinner';
+import Input, { Textarea } from './input';
+import ModalOverlay from './modal-overlay';
+import Button, { IconButton } from './button';
+import { Dropdown, DropdownMenu, DropdownTrigger, DropdownContent } from '@radix-ui/react-dropdown-menu';
+import countries from 'country-list'; // Import country list
+import StyledLabel from './StyledLabel'; // Assuming you have a StyledLabel component
 
-import { firestore } from '../lib/firebase'
-import { userWithNameExists } from '../lib/db'
-
-import Spinner from './spinner'
-import Input, { Textarea } from './input'
-import ModalOverlay from './modal-overlay'
-import Button, { IconButton } from './button'
-
-const StyledLabel = props => (
-  <label
-    css={css`
-      display: block;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
-      color: var(--grey-3);
-    `}
-    {...props}
-  >
-    {props.children}
-  </label>
-)
+const countryList = countries.getData();
 
 function Editor({ user }) {
   const [clientUser, setClientUser] = useState({
@@ -35,31 +24,28 @@ function Editor({ user }) {
     posts: [],
     photo: '',
     readingList: [],
-  })
-  const [usernameErr, setUsernameErr] = useState(null)
+    country: '', // Add country to clientUser state
+  });
+  const [usernameErr, setUsernameErr] = useState(null);
 
   useEffect(() => {
-    setClientUser(user)
-  }, [user])
+    setClientUser(user);
+  }, [user]);
 
   return (
     <>
       <div
         css={css`
           margin: 1.5rem 0 2.5rem 0;
-
           font-size: 0.9rem;
-
           input,
           textarea {
             width: 20em;
           }
-
           textarea {
             min-height: 10em;
             resize: none;
           }
-
           div {
             margin-bottom: 1.5rem;
           }
@@ -71,8 +57,8 @@ function Editor({ user }) {
             id="profile-display-name"
             type="text"
             value={clientUser.displayName}
-            onChange={e =>
-              setClientUser(prevUser => ({
+            onChange={(e) =>
+              setClientUser((prevUser) => ({
                 ...prevUser,
                 displayName: e.target.value,
               }))
@@ -80,41 +66,85 @@ function Editor({ user }) {
           />
         </div>
         <div>
-  <StyledLabel htmlFor="profile-username">Username</StyledLabel>
-  <Input
-    id="profile-username"
-    type="text"
-    value={clientUser.name}
-    onChange={e => {
-      const lowercaseName = e.target.value.toLowerCase();
-      setUsernameErr(false);
-      setClientUser(prevUser => ({
-        ...prevUser,
-        name: lowercaseName,
-      }));
-    }}
-  />
-  {usernameErr !== null && (
-    <p
-      css={css`
-        font-size: 0.9rem;
-        color: var(--grey-3);
-        width: 20rem;
-        margin-top: 1rem;
-      `}
-    >
-      {usernameErr}
-    </p>
-  )}
-</div>
-
+          <StyledLabel htmlFor="profile-username">Username</StyledLabel>
+          <Input
+            id="profile-username"
+            type="text"
+            value={clientUser.name}
+            onChange={(e) => {
+              const lowercaseName = e.target.value.toLowerCase();
+              setUsernameErr(false);
+              setClientUser((prevUser) => ({
+                ...prevUser,
+                name: lowercaseName,
+              }));
+            }}
+          />
+          {usernameErr !== null && (
+            <p
+              css={css`
+                font-size: 0.9rem;
+                color: var(--grey-3);
+                width: 20rem;
+                margin-top: 1rem;
+              `}
+            >
+              {usernameErr}
+            </p>
+          )}
+        </div>
+        <div>
+          <StyledLabel htmlFor="profile-country">Country</StyledLabel>
+          <Dropdown>
+            <DropdownTrigger>
+              <Input
+                id="profile-country"
+                type="text"
+                value={clientUser.country}
+                readOnly
+                css={css`
+                  cursor: pointer;
+                `}
+              />
+            </DropdownTrigger>
+            <DropdownContent>
+              <DropdownMenu>
+                {countryList.map((country, index) => (
+                  <li key={index}>
+                    <button
+                      onClick={() =>
+                        setClientUser((prevUser) => ({
+                          ...prevUser,
+                          country: country.name,
+                        }))
+                      }
+                      css={css`
+                        width: 100%;
+                        text-align: left;
+                        padding: 0.5rem;
+                        background-color: transparent;
+                        border: none;
+                        cursor: pointer;
+                        &:hover {
+                          background-color: var(--grey-1);
+                        }
+                      `}
+                    >
+                      {country.name}
+                    </button>
+                  </li>
+                ))}
+              </DropdownMenu>
+            </DropdownContent>
+          </Dropdown>
+        </div>
         <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>
           <Textarea
             id="profile-about"
             value={clientUser.about}
-            onChange={e =>
-              setClientUser(prevUser => ({
+            onChange={(e) =>
+              setClientUser((prevUser) => ({
                 ...prevUser,
                 about: e.target.value,
               }))
@@ -143,9 +173,8 @@ function Editor({ user }) {
         <a target="_blank" rel="noreferrer" href={`/${user.name}`}>
           justice.rest/{user.name}
         </a>
-          <br/>
-          <br/>
-          {/*It's our Lord and Saviour, Jesus Christ who helped us make it! It's not out of our own wisdom but it was provided by God!*/}
+        <br />
+        <br />
         <p>Made w/ ❤️ (by COG) near a 🌴</p>
       </p>
       <Button
@@ -162,34 +191,34 @@ function Editor({ user }) {
         }
         onClick={async () => {
           if (clientUser.name !== user.name) {
-            let nameClashing = await userWithNameExists(clientUser.name)
+            let nameClashing = await userWithNameExists(clientUser.name);
             if (nameClashing) {
-              setUsernameErr('That username is in use already.')
-              return
+              setUsernameErr('That username is in use already.');
+              return;
             } else if (clientUser.name === '') {
-              setUsernameErr('Username cannot be empty.')
-              return
+              setUsernameErr('Username cannot be empty.');
+              return;
             } else if (!clientUser.name.match(/^[a-z0-9-]+$/i)) {
               setUsernameErr(
                 'Username can only consist of letters (a-z,A-Z), numbers (0-9) and dashes (-).',
-              )
-              return
+              );
+              return;
             } else if (clientUser.name === 'dashboard 🕹️') {
-              setUsernameErr('That username is reserved.')
-              return
+              setUsernameErr('That username is reserved.');
+              return;
             }
           }
 
-          let toSave = { ...clientUser }
-          delete toSave.id
-          await firestore.collection('users').doc(user.id).set(toSave)
-          setUsernameErr(null)
+          let toSave = { ...clientUser };
+          delete toSave.id;
+          await firestore.collection('users').doc(user.id).set(toSave);
+          setUsernameErr(null);
         }}
       >
         Save changes
       </Button>
     </>
-  )
+  );
 }
 
 function ProfileEditor({ uid }) {
@@ -198,7 +227,7 @@ function ProfileEditor({ uid }) {
     {
       idField: 'id',
     },
-  )
+  );
 
   if (userError) {
     return (
@@ -206,12 +235,12 @@ function ProfileEditor({ uid }) {
         <p>Oop, we&apos;ve had an error:</p>
         <pre>{JSON.stringify(userError)}</pre>
       </>
-    )
+    );
   } else if (user) {
-    return <Editor user={user} />
+    return <Editor user={user} />;
   }
 
-  return <Spinner />
+  return <Spinner />;
 }
 
 export default function ProfileSettingsModal(props) {
@@ -254,7 +283,7 @@ export default function ProfileSettingsModal(props) {
             font-size: 0.9rem;
           `}
         >
-        If logged in anonymous, make sure not to sign out as you will lose your access to the account.
+          If logged in anonymous, make sure not to sign out as you will lose your access to the account.
         </Dialog.Description>
         <ProfileEditor uid={props.uid} />
 
@@ -270,5 +299,5 @@ export default function ProfileSettingsModal(props) {
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Root>
-  )
+  );
 }
