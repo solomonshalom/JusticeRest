@@ -195,6 +195,7 @@ Explore.getLayout = function Explore(page) {
       maxWidth="640px"
       css={css`
         margin-top: 5rem;
+        text-decoration: none;
       `}
     >
       <Head>
