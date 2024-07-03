@@ -121,6 +121,7 @@ export default function Explore() {
             li {
               max-width: 25rem;
               margin: 2.5rem 0;
+              text-decoration: none;
             }
           `}
         >
@@ -145,6 +146,7 @@ export default function Explore() {
                       align-items: center;
                       color: var(--grey-3);
                       font-size: 0.9rem;
+                      text-decoration: none;
                     `}
                   >
                     <img
