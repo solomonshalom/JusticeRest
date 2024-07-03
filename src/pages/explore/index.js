@@ -127,7 +127,7 @@ export default function Explore() {
         >
           {explorePosts.map(post => (
             <li key={post.id}>
-              <Link href={`/${post.author.name}/${post.slug}`}>
+              <Link style={{textDecoration: 'none'}} href={`/${post.author.name}/${post.slug}`}>
               <a style={{textDecoration: 'none', color: 'inherit'}}>
                   <h3
                     css={css`
