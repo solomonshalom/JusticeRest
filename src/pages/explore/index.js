@@ -116,6 +116,7 @@ export default function Explore() {
           <ul
           css={css`
             list-style: none;
+            text-decoration: none;
 
             li {
               max-width: 25rem;
