@@ -25,3 +25,6 @@ npm run build
 ```bash
 npm run start
 ```
+
+### Pre-Reqs
+You will need a firebase project w/ firestore and authentication enabled! 
