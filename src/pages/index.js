@@ -145,7 +145,7 @@ Home.getLayout = function HomeLayout(page) {
           description:
             'A platform to speak up, seek change, and inspire justice~',
           url: '/',
-          image: '/images/socials.jpg',
+          image: '/images/socials.png',
         })}
       </Head>
       {page}
