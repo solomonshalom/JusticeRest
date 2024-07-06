@@ -44,6 +44,21 @@ import ModalOverlay from '../../components/modal-overlay'
 import PostContainer from '../../components/post-container'
 import Button, { IconButton, LinkIconButton } from '../../components/button'
 
+const StyledLabel = (props) => (
+  <label
+    css={css`
+      display: block;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      color: var(--grey-3);
+    `}
+    {...props}
+  >
+    {props.children}
+  </label>
+);
+
+
 function SelectionMenu({ editor }) {
   const [editingLink, setEditingLink] = useState(false)
   const [url, setUrl] = useState('')
