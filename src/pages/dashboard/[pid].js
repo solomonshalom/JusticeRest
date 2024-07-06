@@ -43,6 +43,7 @@ import Container from '../../components/container'
 import ModalOverlay from '../../components/modal-overlay'
 import PostContainer from '../../components/post-container'
 import Button, { IconButton, LinkIconButton } from '../../components/button'
+import { debounce } from 'lodash'; // Add this line
 
 const StyledLabel = (props) => (
   <label
@@ -314,6 +315,59 @@ function Editor({ post }) {
     }
   }
 
+// Inside your component
+const [debouncedSlug, setDebouncedSlug] = useState(clientPost.slug);
+
+// Function to validate the slug
+const validateSlug = async (newSlug) => {
+  setSlugErr(false);
+
+  // Check for slug validity or existing slugs
+  if (!newSlug.match(/^[a-z0-9-]+$/i)) {
+    setSlugErr(true);
+    return;
+  }
+
+  // Check if the new slug clashes with existing slugs
+  const slugClashing = await postWithUserIDAndSlugExists(post.author, newSlug);
+
+  if (slugClashing) {
+    setSlugErr(true);
+    return;
+  }
+
+  // Update Firestore with the new slug directly
+  await firestore.collection('posts').doc(post.id).update({
+    slug: newSlug,
+    lastEdited: firebase.firestore.Timestamp.now(),
+  });
+
+  // Update client state
+  setClientPost((prevPost) => ({
+    ...prevPost,
+    slug: newSlug,
+  }));
+};
+
+// Debounced version of validateSlug
+const debouncedValidateSlug = useCallback(debounce(validateSlug, 500), []);
+
+const handleSlugChange = (e) => {
+  const newSlug = e.target.value;
+  setClientPost((prevPost) => ({
+    ...prevPost,
+    slug: newSlug,
+  }));
+  setDebouncedSlug(newSlug);
+};
+
+// Effect to call the debounced function
+useEffect(() => {
+  if (debouncedSlug) {
+    debouncedValidateSlug(debouncedSlug);
+  }
+}, [debouncedSlug, debouncedValidateSlug]);
+
   return (
     <>
       <Head>
@@ -396,82 +450,49 @@ function Editor({ post }) {
             >
               Make changes to your post&apos;s metadata.
             </Dialog.Description>
-            <div
-              css={css`
-                margin: 1.5rem 0;
-              `}
-            >
-              {/* Slug Is Seen Here */}
-              <form>
-                <label
-                  htmlFor="post-slug"
-                  css={css`
-                    display: block;
-                    margin-bottom: 0.5rem;
-                  `}
-                >
-                  Slug
-                </label>
-                <div
-                  css={css`
-                    display: flex;
-                    align-items: center;
-                  `}
-                >
-                  <div>
-                  <Input
-  type="text"
-  id="post-slug"
-  value={clientPost.slug}
-  onChange={async (e) => {
-    setSlugErr(false);
-    const newSlug = e.target.value;
-
-    // Check for slug validity or existing slugs
-    if (!newSlug.match(/^[a-z0-9-]+$/i)) {
-      setSlugErr(true);
-      return;
-    }
-
-    // Check if the new slug clashes with existing slugs
-    const slugClashing = await postWithUserIDAndSlugExists(
-      post.author,
-      newSlug
-    );
-
-    if (slugClashing) {
-      setSlugErr(true);
-      return;
-    }
-
-    // Update Firestore with the new slug directly
-    await firestore.collection('posts').doc(post.id).update({
-      slug: newSlug,
-      lastEdited: firebase.firestore.Timestamp.now(),
-    });
-
-    // Update client state
-    setClientPost((prevPost) => ({
-      ...prevPost,
-      slug: newSlug,
-    }));
-  }}
-/>
-                    {slugErr && (
-                      <p
-                        css={css`
-                          margin-top: 1rem;
-                          font-size: 0.9rem;
-                        `}
-                      >
-                        Invalid slug. That slug is already in use or contains
-                        special characters.
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </form>
-            </div>
+<div
+  css={css`
+    margin: 1.5rem 0;
+  `}
+>
+  <form>
+    <label
+      htmlFor="post-slug"
+      css={css`
+        display: block;
+        margin-bottom: 0.5rem;
+      `}
+    >
+      Slug
+    </label>
+    <div
+      css={css`
+        display: flex;
+        align-items: center;
+      `}
+    >
+      <div>
+        <Input
+          type="text"
+          id="post-slug"
+          value={clientPost.slug}
+          onChange={handleSlugChange}
+        />
+        {slugErr && (
+          <p
+            css={css`
+              margin-top: 1rem;
+              font-size: 0.9rem;
+            `}
+          >
+            Invalid slug. That slug is already in use or contains <br />
+            special characters.
+          </p>
+        )}
+      </div>
+    </div>
+  </form>
+</div>
 
             <div>
               <StyledLabel htmlFor="profile-category">Category</StyledLabel>
