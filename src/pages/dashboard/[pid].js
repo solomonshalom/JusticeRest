@@ -491,6 +491,7 @@ function Editor({ post }) {
                   outline: none;
                   border-radius: 0.5rem;
                   color: inherit;
+                  margin-bottom: 1.5em;
                 `}
                 id="profile-category"
                 value={clientPost.category}
