@@ -419,18 +419,44 @@ function Editor({ post }) {
                   `}
                 >
                   <div>
-                    <Input
-                      type="text"
-                      id="post-slug"
-                      value={clientPost.slug}
-                      onChange={e => {
-                        setSlugErr(false)
-                        setClientPost(prevPost => ({
-                          ...prevPost,
-                          slug: e.target.value,
-                        }))
-                      }}
-                    />
+                  <Input
+  type="text"
+  id="post-slug"
+  value={clientPost.slug}
+  onChange={async (e) => {
+    setSlugErr(false);
+    const newSlug = e.target.value;
+
+    // Check for slug validity or existing slugs
+    if (!newSlug.match(/^[a-z0-9-]+$/i)) {
+      setSlugErr(true);
+      return;
+    }
+
+    // Check if the new slug clashes with existing slugs
+    const slugClashing = await postWithUserIDAndSlugExists(
+      post.author,
+      newSlug
+    );
+
+    if (slugClashing) {
+      setSlugErr(true);
+      return;
+    }
+
+    // Update Firestore with the new slug directly
+    await firestore.collection('posts').doc(post.id).update({
+      slug: newSlug,
+      lastEdited: firebase.firestore.Timestamp.now(),
+    });
+
+    // Update client state
+    setClientPost((prevPost) => ({
+      ...prevPost,
+      slug: newSlug,
+    }));
+  }}
+/>
                     {slugErr && (
                       <p
                         css={css`
@@ -443,37 +469,6 @@ function Editor({ post }) {
                       </p>
                     )}
                   </div>
-                  <IconButton
-                    type="submit"
-                    disabled={clientPost.slug === post.slug || !clientPost.slug}
-                    onClick={async e => {
-                      e.preventDefault()
-
-                      let slugClashing = await postWithUserIDAndSlugExists(
-                        post.author,
-                        clientPost.slug,
-                      )
-
-                      if (
-                        slugClashing ||
-                        !clientPost.slug.match(/^[a-z0-9-]+$/i)
-                      ) {
-                        setSlugErr(true)
-                        return
-                      }
-
-                      let postCopy = { ...post }
-                      delete postCopy.id
-                      postCopy.slug = clientPost.slug
-                      await firestore
-                        .collection('posts')
-                        .doc(post.id)
-                        .update(postCopy)
-                      setSlugErr(false)
-                    }}
-                  >
-                    ✔
-                  </IconButton>
                 </div>
               </form>
             </div>
