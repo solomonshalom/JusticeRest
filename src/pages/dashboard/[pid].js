@@ -344,7 +344,8 @@ function Editor({ post }) {
           disabled={
             post.title === clientPost.title &&
             post.content === clientPost.content &&
-            post.excerpt === clientPost.excerpt
+            post.excerpt === clientPost.excerpt &&
+            post.category === clientPost.category
           }
           onClick={saveChanges}
         >
@@ -385,6 +386,7 @@ function Editor({ post }) {
                 margin: 1.5rem 0;
               `}
             >
+              {/* Slug Is Seen Here */}
               <form>
                 <label
                   htmlFor="post-slug"
@@ -459,6 +461,38 @@ function Editor({ post }) {
                   </IconButton>
                 </div>
               </form>
+            </div>
+
+            <div>
+              <StyledLabel htmlFor="profile-category">Category</StyledLabel>
+              <select
+                css={css`
+                  text-transform: none;
+                  display: block;
+                  width: 17em;
+                  padding: 0.75em 1.5em;
+                  background: none;
+                  border: 1px solid var(--grey-2);
+                  outline: none;
+                  border-radius: 0.5rem;
+                  color: inherit;
+                `}
+                id="profile-category"
+                value={clientPost.category}
+                onChange={e =>
+                  setClientPost(prevPost => ({
+                    ...prevPost,
+                    category: e.target.value,
+                  }))
+                }
+              >
+                <option value="">Type of Concern</option>
+                <option value="Social">Social</option>
+                <option value="Economic">Economic</option>
+                <option value="Political">Political</option>
+                <option value="Corporate">Corporate</option>
+                <option value="Others">Others</option>
+              </select>
             </div>
 
             <div
