@@ -86,6 +86,10 @@ export async function getPostByUsernameAndSlug(username, slug) {
   return post
 }
 
+export async function updatePostCategory(postId, category) {
+  await firestore.collection('posts').doc(postId).update({ category });
+}
+
 export async function setUser(id, data) {
   await firestore.collection('users').doc(id).set({
     ...data,
@@ -104,7 +108,6 @@ export async function createPostForUser(userId) {
     content: '',
     author: userId,
     published: false,
-    category: '',
     lastEdited: firebase.firestore.Timestamp.now(),
   })
 

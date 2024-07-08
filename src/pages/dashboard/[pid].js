@@ -210,9 +210,6 @@ function SelectionMenu({ editor }) {
 }
 
 function Editor({ post }) {
-  const [userdata] = useDocumentData(firestore.doc(`users/${post.author}`), {
-    idField: 'id',
-  })
   const [clientPost, setClientPost] = useState({
     title: '',
     content: '',
@@ -220,7 +217,17 @@ function Editor({ post }) {
     excerpt: '',
     published: true,
     category: '',
-  })
+  });
+
+  // Function to handle category change
+  const handleCategoryChange = async (e) => {
+    const newCategory = e.target.value;
+    setClientPost((prevPost) => ({
+      ...prevPost,
+      category: newCategory,
+    }));
+    await updatePostCategory(post.id, newCategory);
+  };
 
   const [slugErr, setSlugErr] = useState(false)
 
@@ -497,12 +504,7 @@ function Editor({ post }) {
                 `}
                 id="profile-category"
                 value={clientPost.category}
-                onChange={e =>
-                  setClientPost(prevPost => ({
-                    ...prevPost,
-                    category: e.target.value,
-                  }))
-                }
+                onChange={handleCategoryChange}
               >
                 <option value="">Type of Concern</option>
                 <option value="Social">Social</option>
