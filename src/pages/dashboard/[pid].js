@@ -330,6 +330,48 @@ function Editor({ post }) {
             ? `Editing post: ${clientPost.title} / JusticeRest`
             : 'Editing...'}
         </title>
+
+        <meta name="description" content={clientPost.excerpt || "JusticeRest"} />
+        
+        <meta name="robots" content="index, follow" />
+
+        {/* Open Graph / Facebook */}
+        <meta property="og:type" content="article" />
+        <meta property="og:title" content={clientPost.title || "JusticeRest"} />
+        <meta property="og:description" content={clientPost.excerpt || "JusticeRest"} />
+        <meta property="og:image" content="https://github.com/solomonshalom/JusticeRest/blob/main/public/images/socials.png?raw=true" />
+        <meta property="og:url" content={`https://justice.rest/${userdata.name}/${clientPost.slug}`} />
+
+        {/* Twitter */}
+        <meta name="twitter:card" content="Speak Up, Seek Chnage, and Inspire Justice!" />
+        <meta name="twitter:title" content={clientPost.title || "JusticeRest"} />
+        <meta name="twitter:description" content={clientPost.excerpt || "JusticeRest"} />
+        <meta name="twitter:image" content="https://github.com/solomonshalom/JusticeRest/blob/main/public/images/socials.png?raw=true" />
+            
+
+         {/* Structured Data */}
+         <script type="application/ld+json">
+          {JSON.stringify({
+            "@context": "https://schema.org",
+            "@type": "Article",
+            "headline": clientPost.title || "JusticeRest",
+            "description": clientPost.excerpt || "JusticeRest",
+            "author": {
+              "@type": "Person",
+              "name": post.author
+            },
+            "publisher": {
+              "@type": "Organization",
+              "name": "JusticeRest",
+              "logo": {
+                "@type": "ImageObject",
+                "url": "https://github.com/solomonshalom/JusticeRest/blob/main/public/images/logo.png?raw=true"
+              }
+            }
+          })}
+        </script>
+
+
         <link
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
           rel="stylesheet"
@@ -338,6 +380,8 @@ function Editor({ post }) {
           href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
           rel="stylesheet"
         />
+
+      <link rel="canonical" href={`https://justice.rest/${userdata.name}/${clientPost.slug}`} />
       </Head>
 
       <header
