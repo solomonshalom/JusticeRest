@@ -8,6 +8,8 @@ if (firebase.apps.length === 0) {
   firebase.initializeApp(FIREBASE_CONFIG)
 }
 
+firebase.firestore().settings({ experimentalForceLongPolling: true }); 
+
 export const auth = firebase.auth()
 export const firestore = firebase.firestore()
 export default firebase
