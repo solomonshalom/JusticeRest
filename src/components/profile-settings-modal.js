@@ -124,8 +124,8 @@ function Editor({ user }) {
               outline: none;
               border-radius: 0.5rem;
               color: inherit;
-              background-color: var(--grey-1);
-            `}
+              background-color: var(--grey-1)
+              `}
             id="profile-country"
             value={clientUser.country}
             onChange={(e) =>
@@ -189,7 +189,6 @@ function Editor({ user }) {
           user.name === clientUser.name &&
           user.displayName === clientUser.displayName &&
           user.about === clientUser.about &&
-          user.country === clientUser.country &&
           !usernameErr
         }
         onClick={async () => {
@@ -223,6 +222,7 @@ function Editor({ user }) {
     </>
   );
 }
+
 
 function ProfileEditor({ uid }) {
   const [user, userLoading, userError] = useDocumentData(
