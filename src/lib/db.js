@@ -104,6 +104,7 @@ export async function createPostForUser(userId) {
     content: '',
     author: userId,
     published: false,
+    category: '',
     lastEdited: firebase.firestore.Timestamp.now(),
   })
 
