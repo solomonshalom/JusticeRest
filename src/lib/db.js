@@ -5,6 +5,15 @@ export async function userWithIDExists(id) {
   return doc.exists
 }
 
+import firebase, { firestore } from './firebase';
+
+export async function setUser(id, data) {
+  await firestore.collection('users').doc(id).set({
+    ...data,
+    country: data.country, // Ensure to include the country field here
+  });
+}
+
 export async function userWithNameExists(name) {
   const query = await firestore
     .collection('users')
