@@ -35,20 +35,25 @@ export async function getUserByID(id) {
 }
 
 export async function getUserByName(name) {
-  const query = await firestore
-    .collection('users')
-    .where('name', '==', name)
-    .get();
+  try {
+    const query = await firestore
+      .collection('users')
+      .where('name', '==', name)
+      .get();
 
-  if (query.empty || !query.docs[0].exists) {
-    throw { code: 'user/not-found' };
+    if (query.empty || !query.docs[0].exists) {
+      throw { code: 'user/not-found' };
+    }
+
+    const user = { id: query.docs[0].id, ...query.docs[0].data() };
+    const postDocPromises = user.posts.map(postId => getPostByID(postId));
+    user.posts = await Promise.all(postDocPromises);
+
+    return user;
+  } catch (error) {
+    console.error('Error fetching user by name:', error);
+    throw error; // Re-throw the error to propagate it up the call stack
   }
-
-  const user = { id: query.docs[0].id, ...query.docs[0].data() };
-  const postDocPromises = user.posts.map(postId => getPostByID(postId));
-  user.posts = await Promise.all(postDocPromises);
-
-  return user;
 }
 
 export async function getPostByID(id) {
