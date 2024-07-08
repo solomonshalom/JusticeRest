@@ -7,7 +7,6 @@ export async function userWithIDExists(id) {
 
 export async function setUser(id, data) {
   await firestore.collection('users').doc(id).set({
-    ...data,
     country: data.country, // Ensure to include the country field here
   });
 }
