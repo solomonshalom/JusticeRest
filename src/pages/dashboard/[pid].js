@@ -210,6 +210,9 @@ function SelectionMenu({ editor }) {
 }
 
 function Editor({ post }) {
+  const [userdata] = useDocumentData(firestore.doc(`users/${post.author}`), {
+    idField: 'id',
+  })
   const [clientPost, setClientPost] = useState({
     title: '',
     content: '',
