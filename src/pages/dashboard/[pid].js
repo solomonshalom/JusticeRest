@@ -219,6 +219,7 @@ function Editor({ post }) {
     slug: '',
     excerpt: '',
     published: true,
+    category: '',
   })
 
   const [slugErr, setSlugErr] = useState(false)
@@ -231,9 +232,9 @@ function Editor({ post }) {
     let toSave = {
       ...clientPost,
       lastEdited: firebase.firestore.Timestamp.now(),
-    }
-    delete toSave.id // since we get the id from the document not the data
-    await firestore.collection('posts').doc(post.id).set(toSave)
+    };
+    delete toSave.id; // since we get the id from the document not the data
+    await firestore.collection('posts').doc(post.id).set(toSave);
   }
 
   useEffect(() => {
