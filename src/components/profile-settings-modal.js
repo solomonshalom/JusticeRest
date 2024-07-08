@@ -1,3 +1,4 @@
+/** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -9,7 +10,7 @@ import Spinner from './spinner';
 import Input, { Textarea } from './input';
 import ModalOverlay from './modal-overlay';
 import Button, { IconButton } from './button';
-import { default as countryList } from 'country-list';
+import { default as countryList } from 'country-list'; // Import country-list as a whole
 
 const StyledLabel = (props) => (
   <label
@@ -25,7 +26,7 @@ const StyledLabel = (props) => (
   </label>
 );
 
-const countries = countryList.getData();
+const countries = countryList.getData(); // Fetch the data directly
 
 const countryOptions = countries.map((country) => (
   <option key={country.code} value={country.name}>
@@ -41,19 +42,13 @@ function Editor({ user }) {
     posts: [],
     photo: '',
     readingList: [],
-    country: '',
+    country: '', // New state for selected country
   });
   const [usernameErr, setUsernameErr] = useState(null);
 
   useEffect(() => {
-    if (user) {
-      setClientUser(user);
-    }
+    setClientUser(user);
   }, [user]);
-
-  if (!user) {
-    return <Spinner />;
-  }
 
   return (
     <>
@@ -129,8 +124,8 @@ function Editor({ user }) {
               outline: none;
               border-radius: 0.5rem;
               color: inherit;
-              background-color: var(--grey-1);
-            `}
+              background-color: var(--grey-1)
+              `}
             id="profile-country"
             value={clientUser.country}
             onChange={(e) =>
@@ -181,6 +176,7 @@ function Editor({ user }) {
         </a>
         <br />
         <br />
+        {/*It's our Lord and Saviour, Jesus Christ who helped us make it! It's not out of our own wisdom but it was provided by God!*/}
         <p>Made w/ ❤️ (by COG) near a 🌴</p>
       </p>
       <Button
@@ -193,7 +189,6 @@ function Editor({ user }) {
           user.name === clientUser.name &&
           user.displayName === clientUser.displayName &&
           user.about === clientUser.about &&
-          user.country === clientUser.country &&
           !usernameErr
         }
         onClick={async () => {
@@ -228,6 +223,7 @@ function Editor({ user }) {
   );
 }
 
+
 function ProfileEditor({ uid }) {
   const [user, userLoading, userError] = useDocumentData(
     firestore.doc(`users/${uid}`),
@@ -243,8 +239,6 @@ function ProfileEditor({ uid }) {
         <pre>{JSON.stringify(userError)}</pre>
       </>
     );
-  } else if (!user && !userLoading) {
-    return <p>No user found.</p>;
   } else if (user) {
     return <Editor user={user} />;
   }
