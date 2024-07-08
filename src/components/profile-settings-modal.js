@@ -112,44 +112,33 @@ function Editor({ user }) {
           )}
         </div>
         <div>
-      <StyledLabel htmlFor="profile-country">Country</StyledLabel>
-      <select
-        css={css`
-          text-transform: none;
-          display: block;
-          width: 17em;
-          padding: 0.75em 1.5em;
-          background: none;
-          border: 1px solid var(--grey-2);
-          outline: none;
-          border-radius: 0.5rem;
-          color: inherit;
-          appearance: none; /* Removes default styling on select element */
-          background-color: var(--background-color, #fff); /* Adjust as needed */
-          background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='10' viewBox='0 0 10 10'%3E%3Cpath fill='%23000' d='M5 8L0 3h10z'/%3E%3C/svg%3E");
-          background-repeat: no-repeat;
-          background-position: right 1em top 50%;
-          cursor: pointer;
-          &::-ms-expand {
-            display: none;
-          }
-          &:focus {
-            border-color: var(--focus-border-color, #007bff); /* Adjust as needed */
-          }
-        `}
-        id="profile-country"
-        value={clientUser.country}
-        onChange={(e) =>
-          setClientUser((prevUser) => ({
-            ...prevUser,
-            country: e.target.value,
-          }))
-        }
-      >
-        <option value="">Select Country</option>
-        {countryOptions}
-      </select>
-    </div>
+          <StyledLabel htmlFor="profile-country">Country</StyledLabel>
+          <select
+            css={css`
+              text-transform: none;
+              display: block;
+              width: 17em;
+              padding: 0.75em 1.5em;
+              background: none;
+              border: 1px solid var(--grey-2);
+              outline: none;
+              border-radius: 0.5rem;
+              color: inherit;
+              background-color: var(--grey-1)
+              `}
+            id="profile-country"
+            value={clientUser.country}
+            onChange={(e) =>
+              setClientUser((prevUser) => ({
+                ...prevUser,
+                country: e.target.value,
+              }))
+            }
+          >
+            <option value="">Select Country</option>
+            {countryOptions}
+          </select>
+        </div>
         <div>
           <StyledLabel htmlFor="profile-about">About</StyledLabel>
           <Textarea
