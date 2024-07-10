@@ -27,24 +27,24 @@ export default function Home() {
   return (
     <div>
       <div
-css={css`
-                margin-top: 0rem;
-                margin-bottom: 1rem;
-                position: relative;
-                right: 1rem;
+        css={css`
+          margin-top: 0rem;
+          margin-bottom: 1rem;
+          position: relative;
+          right: 1rem;
 
-                @media (max-width: 500px) {
-                    margin-bottom: 1rem;
-                }
+          @media (max-width: 500px) {
+            margin-bottom: 1rem;
+          }
 
-              width: 200px;
-              height: 200px;
+          width: 200px;
+          height: 200px;
 
-              background-image: url('/images/logo.png');
-              background-position: center;
-              background-repeat: no-repeat;
-              background-size: contain;
-`}
+          background-image: url('/images/logo.png');
+          background-position: center;
+          background-repeat: no-repeat;
+          background-size: contain;
+        `}
       ></div>
       <h1
         css={css`
@@ -99,40 +99,44 @@ css={css`
           </Button>
         </div>
       ) : (
-        <div
-          css={css`
-            display: flex;
-            button:first-of-type {
-              margin-right: 1rem;
-            }
-          `}
-        >
-          <Button
-            onClick={() => {
-              const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
-              auth.signInWithPopup(googleAuthProvider).then(async cred => {
-                let userExists = await userWithIDExists(cred.user.uid)
-                
-                if (!userExists) {
-                  await setUser(cred.user.uid, {
-                    name: cred.user.uid,
-                    displayName: cred.user.displayName || 'Anonymous',
-                    about: 'hii',
-                    posts: [],
-                    photo: cred.user.photoURL,
-                    readingList: [],
-                  })
-                }
-              })
-            }}
+        <>
+          <div
+            css={css`
+              display: flex;
+              button:first-of-type {
+                margin-right: 1rem;
+              }
+            `}
           >
-            User ⛹️
-          </Button>
-          {/*Implementing an Avater functionality + Makes code much better! Praise, God (Couldn't have done it w/o him <3):D*/}
-          <AnonymousLoginButton />
-        </div>
-        <br>
-        <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A&#0032;platform&#0032;to&#0032;speak&#0032;up&#0044;&#0032;seek&#0032;change&#0044;&#0032;and&#0032;inspire&#0032;justice&#0033; | Product Hunt" style="width: 350px; height: 54px;" width="350" height="54" /></a>
+            <Button
+              onClick={() => {
+                const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
+                auth.signInWithPopup(googleAuthProvider).then(async cred => {
+                  let userExists = await userWithIDExists(cred.user.uid)
+                  
+                  if (!userExists) {
+                    await setUser(cred.user.uid, {
+                      name: cred.user.uid,
+                      displayName: cred.user.displayName || 'Anonymous',
+                      about: 'hii',
+                      posts: [],
+                      photo: cred.user.photoURL,
+                      readingList: [],
+                    })
+                  }
+                })
+              }}
+            >
+              User ⛹️
+            </Button>
+            {/*Implementing an Avatar functionality + Makes code much better! Praise, God (Couldn't have done it w/o him <3):D*/}
+            <AnonymousLoginButton />
+          </div>
+          <br />
+          <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
+            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A&#0032;platform&#0032;to&#0032;speak&#0032;up&#0044;&#0032;seek&#0032;change&#0044;&#0032;and&#0032;inspire&#0032;justice&#0033; | Product Hunt" style="width: 350px; height: 54px;" width="350" height="54" />
+          </a>
+        </>
       )}
     </div>
   )
