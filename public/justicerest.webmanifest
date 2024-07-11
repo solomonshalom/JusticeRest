@@ -10,15 +10,6 @@
     "start_url": "/",
     "theme_color": "#171717",
     "icons": [
-      {
-        "src": "https://justice.rest/images/logo.png"
-      },
-      {
-        "src": "/favicon.ico",
-        "type": "image/x-icon"
-      },
-      {
-        "icons": [
           {
             "src": "windows11/SmallTile.scale-100.png",
             "sizes": "71x71"
@@ -467,9 +458,7 @@
             "src": "ios/1024.png",
             "sizes": "1024x1024"
           }
-        ]
-      }
-    ],
+        ],
     "id": "JR",
     "lang": "en"
   }
