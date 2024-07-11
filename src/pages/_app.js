@@ -16,6 +16,8 @@ const App = ({ Component, pageProps }) => {
           href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500&display=swap"
           rel="stylesheet"
         />
+
+<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
       <Global
         styles={css`

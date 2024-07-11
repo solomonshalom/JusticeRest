@@ -341,6 +341,8 @@ function Editor({ post }) {
           href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
           rel="stylesheet"
         />
+
+<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
 
       <header

@@ -200,6 +200,7 @@ Explore.getLayout = function Explore(page) {
     >
       <Head>
         <title>Explore / JusticeRest</title>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
       {page}
     </Container>

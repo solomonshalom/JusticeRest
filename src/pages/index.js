@@ -98,6 +98,10 @@ export default function Home() {
             Sign Out 🚪🚶
           </Button>
         </div>
+        <br />
+        <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
+          <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 300px; height: 54px;`} width="300" height="54" />
+        </a>
       ) : (
         <>
           <div
@@ -153,6 +157,8 @@ Home.getLayout = function HomeLayout(page) {
           url: '/',
           image: '/images/socials.png',
         })}
+
+<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
       {page}
     </Container>
