@@ -1,7 +1,6 @@
 {
     "background_color": "#171717",
     "description": "A platform to speak up, seek change, and inspire justice~",
-    "dir": "ltr",
     "display": "standalone",
     "name": "JusticeRest",
     "orientation": "portrait",
