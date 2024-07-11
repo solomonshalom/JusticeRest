@@ -5,7 +5,6 @@
     "display": "standalone",
     "name": "JusticeRest",
     "orientation": "portrait",
-    "scope": "/",
     "short_name": "JusticeRest",
     "start_url": "/",
     "theme_color": "#171717",
