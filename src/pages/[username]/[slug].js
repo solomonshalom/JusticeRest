@@ -109,6 +109,10 @@ export default function Post({ post }) {
           url: `/${post.author.name}/${post.slug}`,
           type: 'article',
         })}
+
+        <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
         <link
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
           rel="stylesheet"

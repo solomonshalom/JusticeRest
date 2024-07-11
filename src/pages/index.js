@@ -184,6 +184,9 @@ Home.getLayout = function HomeLayout(page) {
           image: '/images/socials.png',
         })}
 
+        <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
+
         <script
           defer
           src="https://cloud.umami.is/script.js"
