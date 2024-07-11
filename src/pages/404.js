@@ -18,7 +18,7 @@ export default function NotFound() {
           margin-top: 1.5rem;
         `}
       >
-        Looks like we can&apos;t find what you were looking for 😓
+        OH NO! You have found ___. Return by clicking <a href="https://justice.rest/dashboard">here</a>
       </p>
     </Container>
   )
