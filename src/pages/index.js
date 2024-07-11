@@ -129,9 +129,13 @@ export default function Home() {
             >
               User ⛹️
             </Button>
-            {/*Implementing an Avatar functionality + Makes code much better! Praise, God (Couldn't have done it w/o him <3):D*/}
+            {/* Implementing an Avatar functionality */}
             <AnonymousLoginButton />
           </div>
+          <br />
+          <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
+            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 350px; height: 54px;`} width="350" height="54" />
+          </a>
         </>
       )}
     </div>
