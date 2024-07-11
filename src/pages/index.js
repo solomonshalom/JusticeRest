@@ -2,7 +2,7 @@
 import Head from 'next/head'
 import { css } from '@emotion/react'
 import { useAuthState } from 'react-firebase-hooks/auth'
-import AnonymousLoginButton from '../components/AnonymousLoginButton';
+import AnonymousLoginButton from '../components/AnonymousLoginButton'
 
 import firebase, { auth } from '../lib/firebase'
 import { setUser, userWithIDExists } from '../lib/db'
@@ -82,26 +82,39 @@ export default function Home() {
           <Spinner />
         </Button>
       ) : user ? (
-        <div
-          css={css`
-            display: flex;
-          `}
-        >
-          <LinkButton href="/dashboard">Dashboard 🕹️</LinkButton>
-          <Button
+        <>
+          <div
             css={css`
-              margin-left: 1rem;
+              display: flex;
             `}
-            outline
-            onClick={() => auth.signOut()}
           >
-            Sign Out 🚪🚶
-          </Button>
-        </div>
-        <br />
-        <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
-          <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 300px; height: 54px;`} width="300" height="54" />
-        </a>
+            <LinkButton href="/dashboard">Dashboard 🕹️</LinkButton>
+            <Button
+              css={css`
+                margin-left: 1rem;
+              `}
+              outline
+              onClick={() => auth.signOut()}
+            >
+              Sign Out 🚪🚶
+            </Button>
+          </div>
+          <br />
+          <a
+            href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark"
+              alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt"
+              css={css`
+                width: 300px;
+                height: 54px;
+              `}
+              width="300"
+              height="54"
+            />
+          </a>
         </>
       ) : (
         <>
@@ -118,7 +131,7 @@ export default function Home() {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
                   let userExists = await userWithIDExists(cred.user.uid)
-                  
+
                   if (!userExists) {
                     await setUser(cred.user.uid, {
                       name: cred.user.uid,
@@ -138,8 +151,20 @@ export default function Home() {
             <AnonymousLoginButton />
           </div>
           <br />
-          <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
-            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 300px; height: 54px;`} width="300" height="54" />
+          <a
+            href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest"
+            target="_blank"
+          >
+            <img
+              src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark"
+              alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt"
+              css={css`
+                width: 300px;
+                height: 54px;
+              `}
+              width="300"
+              height="54"
+            />
           </a>
         </>
       )}
@@ -159,7 +184,11 @@ Home.getLayout = function HomeLayout(page) {
           image: '/images/socials.png',
         })}
 
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"
+        ></script>
       </Head>
       {page}
     </Container>
