@@ -134,7 +134,7 @@ export default function Home() {
           </div>
           <br />
           <a href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest" target="_blank">
-            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 350px; height: 54px;`} width="350" height="54" />
+            <img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark" alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt" css={css`width: 325px; height: 54px;`} width="325" height="54" />
           </a>
         </>
       )}
