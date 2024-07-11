@@ -68,8 +68,10 @@ export default function Dashboard() {
           Explore
         </Link>
 
-        {/* Profile settings */}
-        <Link href="#" onClick={() => console.log('Profile clicked')}>
+        <Link href="#" onClick={() => console.log('Profile clicked')} 
+          css={css`
+          &:hover { var(--grey-3); }
+          `}>
           <ProfileSettingsModal Trigger={() => 'Profile'} uid={user?.uid} />
         </Link>
 
