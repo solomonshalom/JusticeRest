@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "rest.justice.twa",
+        "sha256_cert_fingerprints": ["FD:A9:E8:51:31:8B:2F:D8:83:E3:A5:04:7A:98:43:F5:33:58:40:24:C5:A7:E0:C3:F9:EA:EF:25:91:CA:8C:D9"]
+      }
+    }]
