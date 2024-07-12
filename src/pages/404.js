@@ -14,7 +14,13 @@ export default function NotFound() {
       
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
-      
+
+        <script>
+              if (typeof navigator.serviceWorker !== 'undefined') {
+                navigator.serviceWorker.register('https://www.justice.rest/sw.js')
+              }
+       </script>
+
       </Head>
       <h1>404</h1>
       <p

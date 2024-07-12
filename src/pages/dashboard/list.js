@@ -159,6 +159,13 @@ ReadingList.getLayout = function ReadingListLayout(page) {
     >
       <Head>
         <title>Reading List / JusticeRest</title>
+
+        <script>
+              if (typeof navigator.serviceWorker !== 'undefined') {
+                navigator.serviceWorker.register('https://www.justice.rest/sw.js')
+              }
+       </script>
+
         <link
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
           rel="stylesheet"
