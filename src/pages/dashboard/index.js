@@ -18,7 +18,15 @@ import Container from '../../components/container'
 import Search from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
 
-function formatDate(date) {
+type Post = {
+  id: string;
+  title: string;
+  published: boolean;
+  lastEdited: firebase.firestore.Timestamp;
+  [key: string]: any; // For any additional fields
+};
+
+function formatDate(date: Date): string {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Intl.DateTimeFormat('en-US', options).format(date);
 }
@@ -27,11 +35,11 @@ export default function Dashboard() {
   const router = useRouter()
 
   const [user, userLoading, userError] = useAuthState(auth)
-  const [posts, postsLoading, postsError] = useCollectionData(
+  const [posts, postsLoading, postsError] = useCollectionData<Post>(
     firestore.collection('posts').where('author', '==', user ? user.uid : ''),
     { idField: 'id' },
   )
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -43,16 +51,16 @@ export default function Dashboard() {
 
   // Set initial filteredPosts
   useEffect(() => {
-    setFilteredPosts(posts)
-  }, posts)
+    setFilteredPosts(posts || [])
+  }, [posts])
 
   // Get the filtered posts from Search component
-  const getFilteredPosts = (fp) => {
+  const getFilteredPosts = (fp: Post[]) => {
     setFilteredPosts(fp)
   }
 
   // Get the searchInput from Search component
-  const getSearchInput = (searchInput) => {
+  const getSearchInput = (searchInput: string) => {
     return searchInput
   }
 
@@ -145,7 +153,7 @@ export default function Dashboard() {
             getFilteredPosts={getFilteredPosts}
             getSearchInput={getSearchInput}
           ></Search>
-          
+
           <Link href="https://justice.rest/solomon/jr">
             <Button
               outline
@@ -273,7 +281,7 @@ export default function Dashboard() {
   )
 }
 
-Dashboard.getLayout = function DashboardLayout(page) {
+Dashboard.getLayout = function DashboardLayout(page: React.ReactNode) {
   return (
     <Container
       maxWidth="640px"
@@ -285,7 +293,7 @@ Dashboard.getLayout = function DashboardLayout(page) {
         <title>Dashboard / JusticeRest</title>
 
         <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
-      
+
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
       </Head>
