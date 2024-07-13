@@ -12,8 +12,18 @@ import Spinner from '../components/spinner'
 import Container from '../components/container'
 import Button, { LinkButton } from '../components/button'
 
+interface User {
+  uid: string;
+  displayName: string | null;
+  photoURL: string | null;
+}
+
+interface Error {
+  message: string;
+}
+
 export default function Home() {
-  const [user, loading, error] = useAuthState(auth)
+  const [user, loading, error] = useAuthState(auth) as [User | null, boolean, Error | null]
 
   if (error) {
     return (
@@ -172,7 +182,7 @@ export default function Home() {
   )
 }
 
-Home.getLayout = function HomeLayout(page) {
+Home.getLayout = function HomeLayout(page: React.ReactNode) {
   return (
     <Container maxWidth="420px">
       <Head>
