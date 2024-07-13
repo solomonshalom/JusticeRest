@@ -15,8 +15,31 @@ import Container from '../../components/container'
 import { IconButton } from '../../components/button'
 import PostContainer from '../../components/post-container'
 
-function AddToReadingListButton({ uid, pid }) {
-  const [user, setUser] = useState({ readingList: [] })
+interface User {
+  readingList: string[]
+}
+
+interface Post {
+  id: string
+  title: string
+  excerpt: string
+  content: string
+  author: {
+    name: string
+    displayName: string
+    photo: string
+  }
+  lastEdited: number
+  published: boolean
+}
+
+interface AddToReadingListButtonProps {
+  uid: string
+  pid: string
+}
+
+function AddToReadingListButton({ uid, pid }: AddToReadingListButtonProps) {
+  const [user, setUser] = useState<User>({ readingList: [] })
   const [inList, setInList] = useState(false)
 
   useEffect(() => {
@@ -92,12 +115,16 @@ function AddToReadingListButton({ uid, pid }) {
   )
 }
 
-function formatDate(date) {
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+function formatDate(date: Date): string {
+  const options = { day: 'numeric', month: 'long', year: 'numeric' }
+  return new Intl.DateTimeFormat('en-US', options).format(date)
 }
 
-export default function Post({ post }) {
+interface PostProps {
+  post: Post
+}
+
+export default function Post({ post }: PostProps) {
   const [user, _loading, _error] = useAuthState(auth)
 
   return (
@@ -122,7 +149,7 @@ export default function Post({ post }) {
           rel="stylesheet"
         />
 
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
 
       <h1
@@ -195,7 +222,7 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { username: string, slug: string } }) {
   const { username, slug } = params
 
   try {
