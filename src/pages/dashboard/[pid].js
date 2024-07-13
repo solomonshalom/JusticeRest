@@ -44,7 +44,23 @@ import ModalOverlay from '../../components/modal-overlay'
 import PostContainer from '../../components/post-container'
 import Button, { IconButton, LinkIconButton } from '../../components/button'
 
-const StyledLabel = (props) => (
+interface Post {
+  id: string;
+  author: string;
+  title: string;
+  content: string;
+  slug: string;
+  excerpt: string;
+  published: boolean;
+  category: string;
+}
+
+interface UserData {
+  id: string;
+  name: string;
+}
+
+const StyledLabel: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = (props) => (
   <label
     css={css`
       display: block;
@@ -58,8 +74,11 @@ const StyledLabel = (props) => (
   </label>
 );
 
+interface SelectionMenuProps {
+  editor: any;
+}
 
-function SelectionMenu({ editor }) {
+const SelectionMenu: React.FC<SelectionMenuProps> = ({ editor }) => {
   const [editingLink, setEditingLink] = useState(false)
   const [url, setUrl] = useState('')
 
@@ -183,7 +202,7 @@ function SelectionMenu({ editor }) {
            <Pencil1Icon />
            </button>
            */}
-           
+
           <button
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className={editor.isActive('strike') ? 'is-active' : ''}
@@ -209,21 +228,27 @@ function SelectionMenu({ editor }) {
   )
 }
 
-function Editor({ post }) {
-  const [userdata] = useDocumentData(firestore.doc(`users/${post.author}`), {
+interface EditorProps {
+  post: Post;
+}
+
+const Editor: React.FC<EditorProps> = ({ post }) => {
+  const [userdata] = useDocumentData<UserData>(firestore.doc(`users/${post.author}`), {
     idField: 'id',
   })
-  const [clientPost, setClientPost] = useState({
+  const [clientPost, setClientPost] = useState<Post>({
+    id: '',
     title: '',
     content: '',
     slug: '',
     excerpt: '',
     published: true,
     category: '',
+    author: post.author,
   });
 
   // Function to handle category change
-  const handleCategoryChange = async (e) => {
+  const handleCategoryChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCategory = e.target.value;
     setClientPost((prevPost) => ({
       ...prevPost,
@@ -662,11 +687,11 @@ function Editor({ post }) {
   )
 }
 
-export default function PostEditor() {
+const PostEditor: React.FC = () => {
   const router = useRouter()
   const [user, userLoading, userError] = useAuthState(auth)
-  const [post, postLoading, postError] = useDocumentData(
-    firestore.doc(`posts/${router.query.pid}`),
+  const [post, postLoading, postError] = useDocumentData<Post>(
+    firestore.doc(`posts/${router.query.pid as string}`),
     {
       idField: 'id',
     },
@@ -682,7 +707,7 @@ export default function PostEditor() {
     }
   }, [router, user, userLoading, userError, post, postLoading, postError])
 
-  if (userError || postError) {
+                  if (userError || postError) {
     return (
       <>
         <p>Oop, we&apos;ve had an error:</p>
@@ -697,7 +722,7 @@ export default function PostEditor() {
   return <Spinner />
 }
 
-PostEditor.getLayout = function PostEditorLayout(page) {
+PostEditor.getLayout = function PostEditorLayout(page: React.ReactNode) {
   return (
     <Container
       maxWidth="640px"
@@ -709,3 +734,5 @@ PostEditor.getLayout = function PostEditorLayout(page) {
     </Container>
   )
 }
+
+export default PostEditor;
