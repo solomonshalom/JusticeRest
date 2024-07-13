@@ -11,12 +11,34 @@ import { getUserByName } from '../../lib/db'
 import meta from '../../components/meta'
 import Container from '../../components/container'
 
-function formatDate(date) {
+interface Post {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  lastEdited: number;
+  slug: string;
+  published: boolean;
+}
+
+interface User {
+  name: string;
+  displayName: string;
+  about: string;
+  photo: string;
+  posts: Post[];
+}
+
+function formatDate(date: Date): string {
   const options = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
-export default function Profile({ user }) {
+interface ProfileProps {
+  user: User;
+}
+
+export default function Profile({ user }: ProfileProps) {
   return (
     <Container maxWidth="640px">
       <Head>
@@ -35,7 +57,7 @@ export default function Profile({ user }) {
           rel="stylesheet"
         />
 
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>  
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>  
       </Head>
 
       <img
@@ -153,19 +175,19 @@ export async function getStaticPaths() {
   }
 }
 
-export async function getStaticProps({ params }) {
+export async function getStaticProps({ params }: { params: { username: string } }) {
   const { username } = params
 
   try {
     const user = await getUserByName(username)
-    user.posts = user.posts.map(p => ({
+    user.posts = user.posts.map((p: any) => ({
       ...p,
       lastEdited: p.lastEdited.toDate().getTime(),
     }))
-    user.posts.sort((a, b) => {
+    user.posts.sort((a: Post, b: Post) => {
       return b.lastEdited - a.lastEdited
     })
-    user.posts = user.posts.filter(p => p.published)
+    user.posts = user.posts.filter((p: Post) => p.published)
     return {
       props: { user },
       revalidate: 1,
