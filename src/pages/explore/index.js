@@ -7,9 +7,9 @@ import { useRouter } from 'next/router'
 import { htmlToText } from 'html-to-text'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, DocumentData } from "firebase/firestore";
 
-import { createPostForUser, filterExplorePosts } from '../../lib/db'
+import { createPostForUser, filterExplorePosts, getPostByID } from '../../lib/db'
 import { firestore, auth } from '../../lib/firebase'
 
 import Button from '../../components/button'
@@ -19,20 +19,34 @@ import Container from '../../components/container'
 import Search from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
 import { truncate } from '../../lib/utils'
-import { getPostByID } from '../../lib/db'
+
+interface Post {
+  id: string;
+  title: string;
+  author: {
+    name: string;
+    displayName: string;
+    photo: string;
+  };
+  slug: string;
+  excerpt: string;
+  content: string;
+}
 
 export default function Explore() {
   const router = useRouter()
 
   const [user, userLoading, userError] = useAuthState(auth);
-  const [initPosts, initPostsLoading, initPostsError] = useCollectionData(
-    firestore.collection('posts')
-    .where('published', '==', true)
-    .where('title', '!=', '')
-    .orderBy('title')
-    .limit(15),{ idField: 'id' },
-  )
-  const [explorePosts, setExplorePosts] = useState([]);
+  const [initPosts, initPostsLoading, initPostsError] = useCollectionData<DocumentData>(
+    query(
+      collection(firestore, 'posts'),
+      where('published', '==', true),
+      where('title', '!=', ''),
+      orderBy('title'),
+      limit(15)
+    ), { idField: 'id' }
+  );
+  const [explorePosts, setExplorePosts] = useState<Post[]>([]);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -48,10 +62,10 @@ export default function Explore() {
         let posts = await setPostAuthorProfilePics(initPosts);
         setExplorePosts(posts);
     })()
-  }, initPosts)
+  }, [initPosts])
 
   // Set the profile pics for each author
-  const setPostAuthorProfilePics = async(filteredExplorePosts) => {
+  const setPostAuthorProfilePics = async(filteredExplorePosts: DocumentData[]) => {
     const postPromises = filteredExplorePosts?.map(async p => {
       const post = await getPostByID(p.id)
       const author = await firestore
@@ -66,7 +80,7 @@ export default function Explore() {
   }
 
   // Get the searchInput from Search component and do the global search on db
-  const getFilteredExplorePosts = async (searchInput) => {
+  const getFilteredExplorePosts = async (searchInput: string) => {
     let filteredExplorePosts = await filterExplorePosts(searchInput);
     filteredExplorePosts = await setPostAuthorProfilePics(filteredExplorePosts);
     setExplorePosts(filteredExplorePosts)
@@ -100,7 +114,7 @@ export default function Explore() {
       {userError ? (
         <>
           <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
+          <pre>{JSON.stringify(userError)}</pre>
         </>
       ) : user ? (
         explorePosts && explorePosts.length > 0 ? (
@@ -189,7 +203,7 @@ export default function Explore() {
     </>
   )
 }
-Explore.getLayout = function Explore(page) {
+Explore.getLayout = function Explore(page: React.ReactNode) {
   return (
     <Container
       maxWidth="640px"
