@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, ChangeEvent, KeyboardEvent } from 'react'
 
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
@@ -18,11 +18,18 @@ const inputStyles = css`
   }
 `
 
-export default function Search(props) {
-  const [searchInput, setSearchInput] = useState('');
+interface SearchProps {
+  isGlobalSearch: boolean;
+  posts?: Array<{ title: string }>;
+  getSearchInput: (input: string) => void;
+  getFilteredPosts?: (posts: Array<{ title: string }>) => void;
+}
+
+export default function Search(props: SearchProps) {
+  const [searchInput, setSearchInput] = useState<string>('');
   const searchBarPlaceholder = props.isGlobalSearch ? 'Search published posts...' : 'Search your posts...'
 
-  const handleKeyDown = (event) => {
+  const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
     if (props.isGlobalSearch) {
       if (event.key === 'Enter') {
         console.log('do validate')
@@ -33,7 +40,15 @@ export default function Search(props) {
 
   useEffect(() => {
     if (props.isGlobalSearch) {
-      
+
+      // Assuming we might want to fetch or filter global posts based on searchInput
+      const delayDebounceFn = setTimeout(() => {
+        // Placeholder for global search logic
+        console.log('Global search logic to be implemented');
+        props.getSearchInput(searchInput);
+      }, 500);
+
+      return () => clearTimeout(delayDebounceFn);
     } else {
       const delayDebounceFn = setTimeout(() => {
         if (props.posts) {
@@ -41,7 +56,7 @@ export default function Search(props) {
           props.getSearchInput(searchInput);
         }
       }, 500)
-  
+
       return () => clearTimeout(delayDebounceFn)
     }
   }, [searchInput])
@@ -50,8 +65,10 @@ export default function Search(props) {
     if (props.isGlobalSearch) {
       console.log('Do global search')
     } else {
-      let tempPosts = props.posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
-      props.getFilteredPosts(tempPosts);
+      if (props.posts && props.getFilteredPosts) {
+        let tempPosts = props.posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
+        props.getFilteredPosts(tempPosts);
+      }
     }
   }
 
@@ -65,7 +82,7 @@ export default function Search(props) {
     <div
     css={exploreSearchBarStyles}
     >
-      <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" fill="none" stroke-width="1.5" viewBox="0 0 24 24" color="#ffffff"css={css`
+      <svg xmlns="http://www.w3.org/2000/svg" width="1.1em" height="1.1em" fill="none" stroke-width="1.5" viewBox="0 0 24 24" color="#ffffff" css={css`
           position: absolute;
           margin: 0.8em
         `}><path stroke="#ffffff" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="m17 17 4 4M3 11a8 8 0 1 0 16 0 8 8 0 0 0-16 0Z"></path>
@@ -76,7 +93,7 @@ export default function Search(props) {
         placeholder={searchBarPlaceholder}
         onKeyDown={handleKeyDown}
         css={css`${inputStyles}`}
-        onChange={e => {
+        onChange={(e: ChangeEvent<HTMLInputElement>) => {
           setSearchInput(e.target.value);
         }}
       />
