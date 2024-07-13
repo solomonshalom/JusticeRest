@@ -12,7 +12,31 @@ import ModalOverlay from './modal-overlay';
 import Button, { IconButton } from './button';
 import { default as countryList } from 'country-list'; // Import country-list as a whole
 
-const StyledLabel = (props) => (
+interface User {
+  id?: string;
+  name: string;
+  displayName: string;
+  about: string;
+  posts: any[];
+  photo: string;
+  readingList: any[];
+  country: string;
+}
+
+interface EditorProps {
+  user: User;
+}
+
+interface ProfileEditorProps {
+  uid: string;
+}
+
+interface ProfileSettingsModalProps {
+  uid: string;
+  Trigger: React.ComponentType;
+}
+
+const StyledLabel: React.FC<React.LabelHTMLAttributes<HTMLLabelElement>> = (props) => (
   <label
     css={css`
       display: block;
@@ -34,8 +58,8 @@ const countryOptions = countries.map((country) => (
   </option>
 ));
 
-function Editor({ user }) {
-  const [clientUser, setClientUser] = useState({
+const Editor: React.FC<EditorProps> = ({ user }) => {
+  const [clientUser, setClientUser] = useState<User>({
     name: '',
     displayName: '',
     about: '',
@@ -44,7 +68,7 @@ function Editor({ user }) {
     readingList: [],
     country: '', // New state for selected country
   });
-  const [usernameErr, setUsernameErr] = useState(null);
+  const [usernameErr, setUsernameErr] = useState<string | null>(null);
 
   useEffect(() => {
     setClientUser(user);
@@ -91,7 +115,7 @@ function Editor({ user }) {
             value={clientUser.name}
             onChange={(e) => {
               const lowercaseName = e.target.value.toLowerCase();
-              setUsernameErr(false);
+              setUsernameErr(null);
               setClientUser((prevUser) => ({
                 ...prevUser,
                 name: lowercaseName,
@@ -124,8 +148,8 @@ function Editor({ user }) {
               outline: none;
               border-radius: 0.5rem;
               color: inherit;
-              background-color: var(--grey-1)
-              `}
+              background-color: var(--grey-1);
+            `}
             id="profile-country"
             value={clientUser.country}
             onChange={(e) =>
@@ -223,9 +247,8 @@ function Editor({ user }) {
   );
 }
 
-
-function ProfileEditor({ uid }) {
-  const [user, userLoading, userError] = useDocumentData(
+const ProfileEditor: React.FC<ProfileEditorProps> = ({ uid }) => {
+  const [user, userLoading, userError] = useDocumentData<User>(
     firestore.doc(`users/${uid}`),
     {
       idField: 'id',
@@ -246,7 +269,7 @@ function ProfileEditor({ uid }) {
   return <Spinner />;
 }
 
-export default function ProfileSettingsModal(props) {
+const ProfileSettingsModal: React.FC<ProfileSettingsModalProps> = (props) => {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
@@ -304,3 +327,5 @@ export default function ProfileSettingsModal(props) {
     </Dialog.Root>
   );
 }
+
+export default ProfileSettingsModal;
