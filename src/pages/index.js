@@ -12,8 +12,20 @@ import Spinner from '../components/spinner'
 import Container from '../components/container'
 import Button, { LinkButton } from '../components/button'
 
+interface User {
+  uid: string;
+  displayName: string | null;
+  photoURL: string | null;
+}
+
+interface AuthState {
+  user: User | null;
+  loading: boolean;
+  error: firebase.auth.Error | null;
+}
+
 export default function Home() {
-  const [user, loading, error] = useAuthState(auth)
+  const [user, loading, error] = useAuthState(auth) as [User | null, boolean, firebase.auth.Error | null];
 
   if (error) {
     return (
@@ -132,15 +144,15 @@ export default function Home() {
               onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
-                  let userExists = await userWithIDExists(cred.user.uid)
+                  let userExists = await userWithIDExists(cred.user!.uid)
 
                   if (!userExists) {
-                    await setUser(cred.user.uid, {
-                      name: cred.user.uid,
-                      displayName: cred.user.displayName || 'Anonymous',
+                    await setUser(cred.user!.uid, {
+                      name: cred.user!.uid,
+                      displayName: cred.user!.displayName || 'Anonymous',
                       about: 'hii',
                       posts: [],
-                      photo: cred.user.photoURL,
+                      photo: cred.user!.photoURL,
                       readingList: [],
                     })
                   }
@@ -176,7 +188,7 @@ export default function Home() {
   )
 }
 
-Home.getLayout = function HomeLayout(page) {
+Home.getLayout = function HomeLayout(page: React.ReactNode) {
   return (
     <Container maxWidth="420px">
       <Head>
