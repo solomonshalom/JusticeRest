@@ -3,19 +3,40 @@ import Button from '../components/button';
 import firebase, { auth } from '../lib/firebase';
 import { setUser, userWithIDExists } from '../lib/db';
 
-const AnonymousLoginButton = () => {
-  const avatarStyles = ['lorelei-neutral', 'lorelei', 'notionists', 'notionists-neutral'];
+enum AvatarStyles {
+  LORELEI_NEUTRAL = 'lorelei-neutral',
+  LORELEI = 'lorelei',
+  NOTIONISTS = 'notionists',
+  NOTIONISTS_NEUTRAL = 'notionists-neutral'
+}
 
-  const generateRandomSeed = () => {
+interface User {
+  name: string;
+  displayName: string;
+  about: string;
+  posts: any[];
+  readingList: any[];
+  photo: string;
+}
+
+const AnonymousLoginButton: React.FC = () => {
+  const avatarStyles = [
+    AvatarStyles.LORELEI_NEUTRAL,
+    AvatarStyles.LORELEI,
+    AvatarStyles.NOTIONISTS,
+    AvatarStyles.NOTIONISTS_NEUTRAL
+  ];
+
+  const generateRandomSeed = (): string => {
     return Math.floor(Math.random() * 1000000).toString();
   };
 
-  const getRandomStyle = () => {
+  const getRandomStyle = (): AvatarStyles => {
     const randomIndex = Math.floor(Math.random() * avatarStyles.length);
     return avatarStyles[randomIndex];
   };
 
-  const handleAnonymousLogin = async () => {
+  const handleAnonymousLogin = async (): Promise<void> => {
     const randomSeed = generateRandomSeed();
     const randomStyle = getRandomStyle();
 
@@ -24,7 +45,7 @@ const AnonymousLoginButton = () => {
 
       if (!userExists) {
         // Create a new user with the generated avatar seed and style
-        await setUser(cred.user.uid, {
+        const newUser: User = {
           name: cred.user.uid,
           displayName: 'Anonymous',
           about: 'Hii, change this text to add your very own little bio!',
@@ -32,7 +53,8 @@ const AnonymousLoginButton = () => {
           readingList: [],
           // Everytime a new anonymous user creates an account, the below API will create a randomized PFP for them.
           photo: `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}`,
-        });
+        };
+        await setUser(cred.user.uid, newUser);
       }
     });
   };
