@@ -16,19 +16,40 @@ import { truncate } from '../../lib/utils'
 import { firestore, auth } from '../../lib/firebase'
 import { getPostByID, getUserByID } from '../../lib/db'
 
-function List({ uid }) {
-  const [list, setList] = useState([])
+interface Post {
+  id: string;
+  title: string;
+  author: {
+    name: string;
+    displayName: string;
+    photo: string;
+  };
+  slug: string;
+  excerpt: string;
+  content: string;
+}
+
+interface User {
+  readingList: string[];
+}
+
+interface ListProps {
+  uid: string;
+}
+
+function List({ uid }: ListProps) {
+  const [list, setList] = useState<Post[]>([])
 
   useEffect(() => {
     ;(async () => {
-      const user = await getUserByID(uid)
+      const user: User = await getUserByID(uid)
       const postPromises = user.readingList.map(async pid => {
-        const post = await getPostByID(pid)
+        const post: Post = await getPostByID(pid)
         const author = await firestore
           .collection('users')
-          .doc(post.author)
+          .doc(post.author.name)
           .get()
-        post.author = author.data()
+        post.author = author.data() as Post['author']
         return post
       })
       const posts = await Promise.all(postPromises)
@@ -138,7 +159,7 @@ export default function ReadingList() {
       {userError ? (
         <>
           <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
+          <pre>{JSON.stringify(userError)}</pre>
         </>
       ) : user ? (
         <List uid={user.uid} />
@@ -149,7 +170,7 @@ export default function ReadingList() {
   )
 }
 
-ReadingList.getLayout = function ReadingListLayout(page) {
+ReadingList.getLayout = function ReadingListLayout(page: React.ReactNode) {
   return (
     <Container
       maxWidth="640px"
@@ -164,10 +185,10 @@ ReadingList.getLayout = function ReadingListLayout(page) {
           rel="stylesheet"
         />
 
-<link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
-<meta name="mobile-web-app-capable" content="yes" />
+        <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
+        <meta name="mobile-web-app-capable" content="yes" />
 
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
+        <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
       {page}
     </Container>
