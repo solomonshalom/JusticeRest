@@ -20,14 +20,7 @@ const App = ({ Component, pageProps }) => {
           <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
           <meta name="mobile-web-app-capable" content="yes" />
 
-            <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
-
-            <script>
-              if (typeof navigator.serviceWorker !== 'undefined') {
-                navigator.serviceWorker.register('https://www.justice.rest/sw.js')
-              }
-            </script>
-
+<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
       <Global
         styles={css`

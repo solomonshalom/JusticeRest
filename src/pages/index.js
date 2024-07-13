@@ -188,12 +188,6 @@ Home.getLayout = function HomeLayout(page) {
           image: '/images/socials.png',
         })}
 
-      <script>
-              if (typeof navigator.serviceWorker !== 'undefined') {
-                navigator.serviceWorker.register('https://www.justice.rest/sw.js')
-              }
-       </script>
-
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
 
