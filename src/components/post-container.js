@@ -1,7 +1,13 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
+import React, { FC, ReactNode } from 'react';
 
-const PostContainer = props => (
+interface PostContainerProps {
+  children: ReactNode;
+  [key: string]: any; // Allow any other props
+}
+
+const PostContainer: FC<PostContainerProps> = (props) => (
   <div
     css={css`
       margin-top: 2rem;
