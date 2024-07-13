@@ -99,6 +99,7 @@ export default function Home() {
               Sign Out 🚪🚶
             </Button>
           </div>
+          {/*
           <br />
           <a
             href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest"
@@ -115,6 +116,7 @@ export default function Home() {
               height="54"
             />
           </a>
+          */}
         </>
       ) : (
         <>
@@ -150,6 +152,7 @@ export default function Home() {
             {/* Implementing an Avatar functionality */}
             <AnonymousLoginButton />
           </div>
+          {/*
           <br />
           <a
             href="https://www.producthunt.com/posts/justicerest?embed=true&utm_source=badge-featured&utm_medium=badge&utm_souce=badge-justicerest"
@@ -166,6 +169,7 @@ export default function Home() {
               height="54"
             />
           </a>
+          */}
         </>
       )}
     </div>
