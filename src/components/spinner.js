@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
 import { css, keyframes } from '@emotion/react'
+import React from 'react';
 
 const spin = keyframes`
   from {
@@ -10,7 +11,7 @@ const spin = keyframes`
   }
 `
 
-export default function Spinner() {
+const Spinner: React.FC = () => {
   return (
     <svg
       css={css`
@@ -43,3 +44,5 @@ export default function Spinner() {
     </svg>
   )
 }
+
+export default Spinner;
