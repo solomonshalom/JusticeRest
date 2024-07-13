@@ -21,6 +21,8 @@ const buttonStyles = css`
 
   transition: all 200ms ease;
 
+  box-shadow: 0px 4px 1px #a3a3a3;
+
   &:hover {
     background: var(--grey-4);
   }
