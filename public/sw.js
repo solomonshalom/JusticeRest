@@ -1,10 +1,10 @@
 // This is the "Offline copy of pages" service worker
 
-const CACHE = "justicerest-v1";
+const CACHE: string = "justicerest-v1";
 
 importScripts('https://storage.googleapis.com/workbox-cdn/releases/5.1.2/workbox-sw.js');
 
-self.addEventListener("message", (event) => {
+self.addEventListener("message", (event: ExtendableMessageEvent) => {
   if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
