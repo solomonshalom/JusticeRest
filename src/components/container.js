@@ -1,8 +1,15 @@
 /** @jsxImportSource @emotion/react */
 import { css } from '@emotion/react'
+import React, { FC, ReactNode } from 'react';
 
-const Container = props => {
-  const { maxWidth, ...otherProps } = props
+interface ContainerProps {
+  maxWidth: string;
+  children: ReactNode;
+  [key: string]: any;
+}
+
+const Container: FC<ContainerProps> = (props) => {
+  const { maxWidth, ...otherProps } = props;
   return (
     <main
       css={css`
@@ -22,7 +29,7 @@ const Container = props => {
     >
       {props.children}
     </main>
-  )
+  );
 }
 
-export default Container
+export default Container;
