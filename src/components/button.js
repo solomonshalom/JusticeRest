@@ -1,6 +1,8 @@
 /** @jsxImportSource @emotion/react */
 import Link from 'next/link'
 import { css } from '@emotion/react'
+import { ButtonHTMLAttributes, AnchorHTMLAttributes, DetailedHTMLProps, ReactNode } from 'react'
+
 /*
 &:hover {
     background: var(--grey-4);
@@ -67,7 +69,12 @@ const outlineButtonStyles = css`
   }
 `
 
-export default function Button(props) {
+interface ButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+  outline?: boolean;
+  children: ReactNode;
+}
+
+export default function Button(props: ButtonProps) {
   if (props.outline) {
     let { outline, ...rest } = props
 
@@ -84,7 +91,12 @@ export default function Button(props) {
   )
 }
 
-export function LinkButton(props) {
+interface LinkButtonProps extends DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+  outline?: boolean;
+  children: ReactNode;
+}
+
+export function LinkButton(props: LinkButtonProps) {
   if (props.outline) {
     let { outline, ...rest } = props
 
@@ -144,7 +156,11 @@ const iconButtonStyles = css`
   }
 `
 
-export function IconButton(props) {
+interface IconButtonProps extends DetailedHTMLProps<ButtonHTMLAttributes<HTMLButtonElement>, HTMLButtonElement> {
+  children: ReactNode;
+}
+
+export function IconButton(props: IconButtonProps) {
   return (
     <button
       css={css`
@@ -157,7 +173,11 @@ export function IconButton(props) {
   )
 }
 
-export function LinkIconButton(props) {
+interface LinkIconButtonProps extends DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+  children: ReactNode;
+}
+
+export function LinkIconButton(props: LinkIconButtonProps) {
   return (
     <Link {...props}>
       <a
