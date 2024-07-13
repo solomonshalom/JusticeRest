@@ -1,8 +1,11 @@
 /** @jsxImportSource @emotion/react */
 import Head from 'next/head'
 import { css } from '@emotion/react'
-
 import Container from '../components/container'
+
+type ContainerProps = {
+  maxWidth: string;
+};
 
 export default function NotFound() {
   return (
@@ -11,15 +14,15 @@ export default function NotFound() {
         <title>Not Found</title>
 
         <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
-      
+
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
 
         <script>
-              if (typeof navigator.serviceWorker !== 'undefined') {
-                navigator.serviceWorker.register('https://www.justice.rest/sw.js')
-              }
-       </script>
+          if (typeof navigator.serviceWorker !== 'undefined') {
+            navigator.serviceWorker.register('https://www.justice.rest/sw.js')
+          }
+        </script>
 
       </Head>
       <h1>404</h1>
