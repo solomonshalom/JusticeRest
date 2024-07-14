@@ -4,6 +4,7 @@ type Redirect = {
   permanent: boolean;
 };
 
+
 module.exports = {
   async redirects(): Promise<Redirect[]> {
     return [
