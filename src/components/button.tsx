@@ -173,22 +173,61 @@ export function IconButton(props: IconButtonProps) {
   )
 }
 
+interface LinkButtonProps extends DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+  href: string; // Ensure href is always required
+  outline?: boolean;
+  children: ReactNode;
+}
+
+export function LinkButton(props: LinkButtonProps) {
+  const { outline, href, ...rest } = props;
+
+  if (outline) {
+    return (
+      <Link href={href} {...rest}>
+        <a
+          css={css`
+            ${outlineButtonStyles}
+            display: inline-block;
+          `}
+        >
+          {props.children}
+        </a>
+      </Link>
+    );
+  }
+  return (
+    <Link href={href} {...rest}>
+      <a
+        css={css`
+          ${buttonStyles}
+          display: inline-block;
+        `}
+      >
+        {props.children}
+      </a>
+    </Link>
+  );
+}
+
 interface LinkIconButtonProps extends DetailedHTMLProps<AnchorHTMLAttributes<HTMLAnchorElement>, HTMLAnchorElement> {
+  href: string; // Ensure href is always required
   children: ReactNode;
 }
 
 export function LinkIconButton(props: LinkIconButtonProps) {
+  const { href, ...rest } = props;
+
   return (
-    <Link {...props}>
+    <Link href={href} {...rest}>
       <a
         css={css`
           ${iconButtonStyles}
           color: inherit;
         `}
-        {...props}
       >
         {props.children}
       </a>
     </Link>
-  )
+  );
 }
