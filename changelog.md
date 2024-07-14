@@ -10,7 +10,7 @@ There's a lot more I need to do, especially the issue with NodeJS version `18.x`
 # Craft - Alpha (12 Aug'23)
 This is the second, optimized and production build. Although this has the same issues as the previous version, it did come w/ a lot of makeovers. One of the key points of this build is the use of color, emojis, and a newly added contact page.
 
-OH, I now officially also include an anonymous login :D but I am still trying to figure out how to moderate these contents, as that is a major challenge.
+OH, I now officially also include an anonymous login :D but I am still trying to figure out how to moderate these contents, as that is a major challenge. 
 
 This is still considered beta due to the now-and-then code changes happening which could potentially break the UI, which is why I suggest using it w/ care and not playing rough, at least for now.
 
