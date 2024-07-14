@@ -3,6 +3,6 @@
       "target": {
         "namespace": "android_app",
         "package_name": "rest.justice.twa",
-        "sha256_cert_fingerprints": ["29:8B:CA:71:5C:2E:1B:3D:A0:46:B9:70:83:8C:A6:84:54:E4:C4:E3:91:11:55:0D:AA:58:8B:8D:B0:D5:F2:3D"]
+        "sha256_cert_fingerprints": ["8A:A1:3B:D6:C9:3D:66:68:66:3A:95:AF:38:F7:74:E3:76:DE:E4:5F:DF:62:66:40:37:80:BE:17:79:2D:56:CF"]
       }
     }]
