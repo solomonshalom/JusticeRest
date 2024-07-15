@@ -34,7 +34,7 @@ const App = ({ Component, pageProps }) => {
 
           [data-theme='dark'] {
             --grey-1: #171717;
-            --grey-2: #2e2e2e;
+            --grey-2: #3a3939;
             --grey-4: #c7c7c7;
             --grey-5: #fcfcfc;
           }
