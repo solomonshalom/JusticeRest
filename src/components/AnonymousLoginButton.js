@@ -2,6 +2,7 @@
 import Button from '../components/button';
 import firebase, { auth } from '../lib/firebase';
 import { setUser, userWithIDExists } from '../lib/db';
+import { css } from '@emotion/react';
 
 const AnonymousLoginButton = () => {
   const avatarStyles = ['lorelei-neutral', 'lorelei', 'notionists', 'notionists-neutral'];
