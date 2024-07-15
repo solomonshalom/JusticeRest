@@ -21,16 +21,8 @@ const buttonStyles = css`
 
   transition: all 200ms ease;
 
-  /* Adding the shadow effect */
-  box-shadow: 0px 4px 1px #a3a3a3;
-  
   &:hover {
     background: var(--grey-4);
-  }
-
-  &:active {
-    transform: translateY(2px);
-    box-shadow: none;
   }
 
   &:disabled {

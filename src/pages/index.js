@@ -129,6 +129,39 @@ export default function Home() {
             `}
           >
             <Button
+                      css={css`
+                          display: block;
+                          border: none;
+                          outline: none;
+                          cursor: pointer;
+
+                          padding: 0.75em 1.5em;
+                          background: var(--grey-5);
+                          color: var(--grey-1);
+                          border-radius: 0.33em;
+
+                          border: none;
+
+                          transition: all 200ms ease;
+
+                          /* Adding the shadow effect */
+                          box-shadow: 0px 4px 1px #a3a3a3;
+                          
+                          &:hover {
+                            background: var(--grey-4);
+                          }
+
+                          &:active {
+                            transform: translateY(2px);
+                            box-shadow: none;
+                          }
+
+                          &:disabled {
+                            cursor: not-allowed;
+                            background: var(--grey-4);
+                            color: var(--grey-2);
+                          }
+                      `}
               onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
