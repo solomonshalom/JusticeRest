@@ -96,7 +96,7 @@ export default function Home() {
               outline: none;
               cursor: pointer;
 
-              padding: 0.75em 1.5em;
+              padding: 0.1em 0em;
               background: var(--grey-5);
               color: var(--grey-1);
               border-radius: 0.33em;
@@ -123,7 +123,8 @@ export default function Home() {
                 color: var(--grey-2);
               }
           `}
-            >Dashboard 🕹️
+            >
+              Dashboard 🕹️
             </LinkButton>
             <Button
               css={css`
