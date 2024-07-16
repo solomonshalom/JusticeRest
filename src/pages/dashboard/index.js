@@ -94,7 +94,7 @@ export default function Dashboard() {
           display: flex;
           flex-wrap: wrap;
           gap: 1em;
-          width: 100%;
+          width: 109%;
         `}>
           <Button
             outline
