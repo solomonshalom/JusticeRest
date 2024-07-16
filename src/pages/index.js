@@ -51,15 +51,10 @@ export default function Home() {
           font-size: 1.5rem;
           letter-spacing: -0.02rem;
           margin-bottom: 1.5rem;
-
-          span.rest {
-            background: linear-gradient(90deg, #eab308, #f59e0b, #ea580c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
           }
         `}
       >
-        Justice<span className="rest">Rest</span>
+        JusticeRest
       </h1>
       <ul
         css={css`
