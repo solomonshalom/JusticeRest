@@ -51,9 +51,15 @@ export default function Home() {
           font-size: 1.5rem;
           letter-spacing: -0.02rem;
           margin-bottom: 1.5rem;
+
+          span.rest {
+            background: linear-gradient(90deg, #eab308, #f59e0b, #ea580c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+          }
         `}
       >
-        JusticeRest
+        Justice<span className="rest">Rest</span>
       </h1>
       <ul
         css={css`
@@ -73,9 +79,9 @@ export default function Home() {
           }
         `}
       >
-        <li>Speak Up</li>
-        <li>Seek Change</li>
-        <li>Inspire Justice</li>
+        <li>Post problems needing attention</li>
+        <li>Engage with the community for solutions</li>
+        <li>Advocate for justice by resolving issues</li>
       </ul>
       {loading ? (
         <Button>
@@ -198,39 +204,39 @@ export default function Home() {
             `}
           >
             <Button
-                      css={css`
-                          display: block;
-                          border: none;
-                          outline: none;
-                          cursor: pointer;
+              css={css`
+                display: block;
+                border: none;
+                outline: none;
+                cursor: pointer;
 
-                          padding: 0.75em 1.5em;
-                          background: var(--grey-5);
-                          color: var(--grey-1);
-                          border-radius: 0.33em;
+                padding: 0.75em 1.5em;
+                background: var(--grey-5);
+                color: var(--grey-1);
+                border-radius: 0.33em;
 
-                          border: none;
+                border: none;
 
-                          transition: all 200ms ease;
+                transition: all 200ms ease;
 
-                          /* Adding the shadow effect */
-                          box-shadow: 0px 4px 1px #a3a3a3;
-                          
-                          &:hover {
-                            background: var(--grey-4);
-                          }
+                /* Adding the shadow effect */
+                box-shadow: 0px 4px 1px #a3a3a3;
+                
+                &:hover {
+                  background: var(--grey-4);
+                }
 
-                          &:active {
-                            transform: translateY(2px);
-                            box-shadow: none;
-                          }
+                &:active {
+                  transform: translateY(2px);
+                  box-shadow: none;
+                }
 
-                          &:disabled {
-                            cursor: not-allowed;
-                            background: var(--grey-4);
-                            color: var(--grey-2);
-                          }
-                      `}
+                &:disabled {
+                  cursor: not-allowed;
+                  background: var(--grey-4);
+                  color: var(--grey-2);
+                }
+              `}
               onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
