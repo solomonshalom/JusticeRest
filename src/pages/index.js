@@ -26,8 +26,13 @@ export default function Home() {
 
   return (
     <div>
+      <div style={{ width: '100vw', minHeight: '100vh', position: 'fixed', zIndex: 1, display: 'flex', justifyContent: 'center', padding: '120px 24px 160px 24px', pointerEvents: 'none' }}>
+        <div style={{ background: 'radial-gradient(circle, rgba(2, 0, 36, 0) 0, #fafafa 100%)', position: 'absolute', content: '""', zIndex: 2, width: '100%', height: '100%', top: 0 }}></div>
+        <div style={{ content: '""', backgroundImage: 'url(https://assets.dub.co/misc/grid.svg)', zIndex: 1, position: 'absolute', width: '100%', height: '100%', top: 0, opacity: 0.4, filter: 'invert(1)' }}></div>
+        <div style={{ zIndex: 3, width: '100%', maxWidth: '640px', backgroundImage: 'radial-gradient(at 27% 37%, hsla(215, 98%, 61%, 1) 0px, transparent 0%), radial-gradient(at 97% 21%, hsla(125, 98%, 72%, 1) 0px, transparent 50%), radial-gradient(at 52% 99%, hsla(354, 98%, 61%, 1) 0px, transparent 50%), radial-gradient(at 10% 29%, hsla(256, 96%, 67%, 1) 0px, transparent 50%), radial-gradient(at 97% 96%, hsla(38, 60%, 74%, 1) 0px, transparent 50%), radial-gradient(at 33% 50%, hsla(222, 67%, 73%, 1) 0px, transparent 50%), radial-gradient(at 79% 53%, hsla(343, 68%, 79%, 1) 0px, transparent 50%)', position: 'absolute', height: '100%', filter: 'blur(100px) saturate(150%)', top: '80px', opacity: 0.15 }}></div>
+      </div>
       <div
-        css={css
+        css={css`
           margin-top: 0rem;
           margin-bottom: 1rem;
           position: relative;
@@ -44,25 +49,19 @@ export default function Home() {
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
-        }
+        `}
       ></div>
       <h1
-        css={css
+        css={css`
           font-size: 1.5rem;
           letter-spacing: -0.02rem;
           margin-bottom: 1.5rem;
-
-          span.rest {
-            background: linear-gradient(90deg, #eab308, #f59e0b, #ea580c);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-          }
-        }
+        `}
       >
-        Justice<span className="rest">Rest</span>
+        JusticeRest
       </h1>
       <ul
-        css={css
+        css={css`
           list-style: none;
           color: var(--grey-3);
           margin-bottom: 2.5rem;
@@ -77,7 +76,7 @@ export default function Home() {
             font-size: 0.9rem;
             margin-right: 0.5rem;
           }
-        }
+        `}
       >
         <li>Post problems needing attention</li>
         <li>Engage with the community for solutions</li>
@@ -90,50 +89,50 @@ export default function Home() {
       ) : user ? (
         <>
           <div
-            css={css
+            css={css`
               display: flex;
-            }
+            `}
           >
             <LinkButton 
-            href="/dashboard"
-            css={css
-              display: block;
-              border: none;
-              outline: none;
-              cursor: pointer;
+              href="/dashboard"
+              css={css`
+                display: block;
+                border: none;
+                outline: none;
+                cursor: pointer;
 
-              padding: 0.1em 0em;
-              background: var(--grey-5);
-              color: var(--grey-1);
-              border-radius: 0.33em;
+                padding: 0.1em 0em;
+                background: var(--grey-5);
+                color: var(--grey-1);
+                border-radius: 0.33em;
 
-              border: none;
+                border: none;
 
-              transition: all 200ms ease;
+                transition: all 200ms ease;
 
-              /* Adding the shadow effect */
-              box-shadow: 0px 4px 1px #a3a3a3;
-              
-              &:hover {
-                background: var(--grey-4);
-              }
+                /* Adding the shadow effect */
+                box-shadow: 0px 4px 1px #a3a3a3;
+                
+                &:hover {
+                  background: var(--grey-4);
+                }
 
-              &:active {
-                transform: translateY(2px);
-                box-shadow: none;
-              }
+                &:active {
+                  transform: translateY(2px);
+                  box-shadow: none;
+                }
 
-              &:disabled {
-                cursor: not-allowed;
-                background: var(--grey-4);
-                color: var(--grey-2);
-              }
-          }
+                &:disabled {
+                  cursor: not-allowed;
+                  background: var(--grey-4);
+                  color: var(--grey-2);
+                }
+              `}
             >
               Dashboard 🕹️
             </LinkButton>
             <Button
-              css={css
+              css={css`
                 display: block;
                 border: none;
                 outline: none;
@@ -167,7 +166,7 @@ export default function Home() {
                 }
 
                 margin-left: 1rem;
-              }
+              `}
               outline
               onClick={() => auth.signOut()}
             >
@@ -183,10 +182,10 @@ export default function Home() {
             <img
               src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark"
               alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt"
-              css={css
+              css={css`
                 width: 300px;
                 height: 54px;
-              }
+              `}
               width="300"
               height="54"
             />
@@ -196,15 +195,15 @@ export default function Home() {
       ) : (
         <>
           <div
-            css={css
+            css={css`
               display: flex;
               button:first-of-type {
                 margin-right: 1rem;
               }
-            }
+            `}
           >
             <Button
-              css={css
+              css={css`
                 display: block;
                 border: none;
                 outline: none;
@@ -236,7 +235,7 @@ export default function Home() {
                   background: var(--grey-4);
                   color: var(--grey-2);
                 }
-              }
+              `}
               onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
@@ -269,10 +268,10 @@ export default function Home() {
             <img
               src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=470161&theme=dark"
               alt="JusticeRest - A platform to speak up, seek change, and inspire justice! | Product Hunt"
-              css={css
+              css={css`
                 width: 300px;
                 height: 54px;
-              }
+              `}
               width="300"
               height="54"
             />
