@@ -54,6 +54,13 @@ const App = ({ Component, pageProps }) => {
           body {
             background: var(--grey-1);
             font-family: 'Inter', sans-serif;
+            font-family: 'Inter', sans-serif;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center center;
+            background-repeat: repeat;
+            background-image: url('data:image/svg+xml,<svg viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg"><defs><filter id="b" x="-500" y="-500" width="2000" height="2000" filterUnits="userSpaceOnUse"><feGaussianBlur in="SourceGraphic" stdDeviation="100"/></filter><filter id="a" x="-500" y="-500" width="2000" height="2000" filterUnits="userSpaceOnUse"> > <feFlood flood-color="%23fff" result="neutral-gray"/><feTurbulence type="fractalNoise" baseFrequency="2.5" numOctaves="100" stitchTiles="stitch" result="noise"/><feColorMatrix in="noise" type="saturate" values="0" result="destaturatedNoise"/><feComponentTransfer in="desaturatedNoise" result="theNoise"><feFuncA type="table" tableValues="0 0 0.05 0"/></feComponentTransfer><feBlend in="SourceGraphic" in2="theNoise" mode="soft-light" result="noisy-image"/></filter><radialGradient id="c" cx="50%" cy="50%" r="50%" fx="20%" fy="40%"><stop offset="0%" stop-color="%239d00ff"/><stop offset="100%" stop-color="rgba(255,0,162,0.2)"/></radialGradient></defs><rect width="100%" height="100%"/><g filter="url(%23a)"><g filter="url(%23b)"><svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg" transform="translate(-24.861 537.363)" opacity=".6"><path fill="url(%23c)" d="M468 388q-66 88-175 100t-188.5-88-5-209.5 183-79 180 109.5 5.5 167"/></svg></g></g><svg width="500" height="90.312" viewBox="0 0 1218 220" fill="none" xmlns="http://www.w3.org/2000/svg" transform="translate(250 454.844)"/></svg>');
           }
 
           h1,
