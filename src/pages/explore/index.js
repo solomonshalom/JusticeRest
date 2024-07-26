@@ -97,32 +97,50 @@ export default function Explore() {
 
       </Header>
 
-      <svg 
-          width="21" 
-          height="21" 
-          stroke-width="1.5" 
-          viewBox="0 0 24 24" 
-          fill="none" 
-          xmlns="http://www.w3.org/2000/svg" 
-          color="#ffffff">
-          css={css`
-            margin: 0.2em 0 0 0.1em;
+      <Button
+            outline
+            css={css`
+              font-size: 1.3rem;
+              padding: 0;
+              width: 2.15em;
+              height: 2.15em;
+            `}
+            onClick={async () => {
+              const newPostsId = await createPostForUser(user.uid)
+              router.push(`/dashboard/${newPostsId}`)
+            }}
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="21px"
+              height="21px"
+              fill="none"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              color="#ffffff"
+              css={css`
+                margin: 0.2em 0 0 0.1em;
 
-            path {
-              stroke: black;
-            }
+                path {
+                  stroke: black;
+                }
 
-            @media (prefers-color-scheme: dark) {
-              path {
-                stroke: white;
-              }
-            }
-          `}
-        >}
-          <path d="M3 15V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M15 3s-4.5 0-4.5 9H13c0 9 2 9 2 9" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
-        </svg>
+                @media (prefers-color-scheme: dark) {
+                  path {
+                    stroke: white;
+                  }
+                }
+              `}
+            >
+                <path
+                  stroke="#ffffff"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m14.363 5.652 1.48-1.48a2 2 0 0 1 2.829 0l1.414 1.414a2 2 0 0 1 0 2.828l-1.48 1.48m-4.243-4.242-9.616 9.615a2 2 0 0 0-.578 1.238l-.242 2.74a1 1 0 0 0 1.084 1.085l2.74-.242a2 2 0 0 0 1.24-.578l9.615-9.616m-4.243-4.242 4.243 4.242"
+                ></path>
+              </svg>
+          </Button>
 
       {userError ? (
         <>
