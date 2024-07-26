@@ -105,7 +105,7 @@ export default function Explore() {
       ) : user ? (
         explorePosts && explorePosts.length > 0 ? (
           <>
-          <svg 
+          {<svg 
           width="21" 
           height="21" 
           stroke-width="1.5" 
@@ -126,7 +126,7 @@ export default function Explore() {
               }
             }
           `}
-        >
+        >}
           <path d="M3 15V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M15 3s-4.5 0-4.5 9H13c0 9 2 9 2 9" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#000" stroke-linecap="round" stroke-linejoin="round"/>
