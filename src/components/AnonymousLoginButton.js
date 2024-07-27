@@ -72,7 +72,7 @@ const AnonymousLoginButton = () => {
         color: var(--grey-2);
       }
   `}>
-    Anonymous 🤿
+    Anonymous 🥷
     </Button>
   );
 };

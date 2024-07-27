@@ -248,7 +248,7 @@ export default function Home() {
                 })
               }}
             >
-              User ⛹️
+              Google 💪
             </Button>
             {/* Implementing an Avatar functionality */}
             <AnonymousLoginButton />
