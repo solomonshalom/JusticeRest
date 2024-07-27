@@ -57,7 +57,7 @@ export default function Search(props) {
 
   const exploreSearchBarStyles = 
     props.isGlobalSearch ?
-      css`width: 80%`    // Explore page search bar styles
+      css`width: 100%`    // Explore page search bar styles
       :
       css`width: 80%`     // Dashboard page search bar styles
 
