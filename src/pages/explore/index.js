@@ -34,6 +34,7 @@ export default function Explore() {
     .limit(15),{ idField: 'id' },
   )
   const [explorePosts, setExplorePosts] = useState([]);
+  const [isFilterModalOpen, setFilterModalOpen] = useState(false);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
