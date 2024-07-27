@@ -18,6 +18,7 @@ import Spinner from '../../components/spinner'
 import Container from '../../components/container'
 import Search from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
+import FilterModal from '../../components/FilterModal'
 import { truncate } from '../../lib/utils'
 import { getPostByID } from '../../lib/db'
 
@@ -132,10 +133,7 @@ export default function Explore() {
               width: 2.15em;
               height: 2.15em;
             `}
-            onClick={async () => {
-              const newPostsId = await createPostForUser(user.uid)
-              router.push(`/dashboard/${newPostsId}`)
-            }}
+            onClick={() => setFilterModalOpen(true)} // Open the filter modal
           >
             <svg 
             width="21" 
@@ -164,6 +162,12 @@ export default function Explore() {
             <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
           </Button>
+
+          <FilterModal 
+          isOpen={isFilterModalOpen} 
+          onClose={() => setFilterModalOpen(false)} // Close the modal
+        />
+
           <Search
             posts={explorePosts}
             isGlobalSearch={true}
