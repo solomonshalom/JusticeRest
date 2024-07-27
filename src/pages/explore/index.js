@@ -242,7 +242,7 @@ export default function Explore() {
         </ul>
         </>
         ) : (
-          <p>Loading!</p>
+          <Spinner />
         )
       ) : (
         <Spinner />
