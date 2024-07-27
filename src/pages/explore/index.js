@@ -18,7 +18,6 @@ import Spinner from '../../components/spinner'
 import Container from '../../components/container'
 import Search from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
-import FilterModal from '../../components/filter-modal'
 import { truncate } from '../../lib/utils'
 import { getPostByID } from '../../lib/db'
 
@@ -34,7 +33,6 @@ export default function Explore() {
     .limit(15),{ idField: 'id' },
   )
   const [explorePosts, setExplorePosts] = useState([]);
-  const [isFilterModalOpen, setFilterModalOpen] = useState(false); // State for modal visibility
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -80,9 +78,6 @@ export default function Explore() {
       setFilteredPosts(fp)
     }
 
-    {isFilterModalOpen && (
-      <FilterModal onClose={() => setFilterModalOpen(false)} />
-    )}
   return (
     <>
       <Header>
@@ -137,7 +132,9 @@ export default function Explore() {
               width: 2.15em;
               height: 2.15em;
             `}
-            onClick={() => setFilterModalOpen(true)}
+            onClick={async () => {
+              const newPostsId = await createPostForUser(user.uid)
+              router.push(`/dashboard/${newPostsId}`)
             }}
           >
             <svg 
