@@ -97,7 +97,21 @@ export default function Explore() {
 
       </Header>
 
-      <Button
+      {userError ? (
+        <>
+          <p>Oop, we&apos;ve had an error:</p>
+          <pre>{JSON.stringify(error)}</pre>
+        </>
+      ) : user ? (
+        explorePosts && explorePosts.length > 0 ? (
+          <>
+          <div css={css`
+          display: flex;
+          flex-wrap: wrap;
+          gap: 1em;
+          width: 109%;
+        `}>
+          <Button
             outline
             css={css`
               font-size: 1.3rem;
@@ -110,46 +124,37 @@ export default function Explore() {
               router.push(`/dashboard/${newPostsId}`)
             }}
           >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="21px"
-              height="21px"
-              fill="none"
-              stroke-width="1.5"
-              viewBox="0 0 24 24"
-              color="#ffffff"
-              css={css`
-                margin: 0.2em 0 0 0.1em;
+<svg
+  xmlns="http://www.w3.org/2000/svg"
+  width="21px"
+  height="21px"
+  fill="none"
+  stroke-width="1.5"
+  viewBox="0 0 24 24"
+  color="#ffffff"
+  css={css`
+    margin: 0.2em 0 0 0.1em;
 
-                path {
-                  stroke: black;
-                }
+    path {
+      stroke: black;
+    }
 
-                @media (prefers-color-scheme: dark) {
-                  path {
-                    stroke: white;
-                  }
-                }
-              `}
-            >
-                <path
-                  stroke="#ffffff"
-                  stroke-width="1.3"
-                  stroke-linecap="round"
-                  stroke-linejoin="round"
-                  d="m14.363 5.652 1.48-1.48a2 2 0 0 1 2.829 0l1.414 1.414a2 2 0 0 1 0 2.828l-1.48 1.48m-4.243-4.242-9.616 9.615a2 2 0 0 0-.578 1.238l-.242 2.74a1 1 0 0 0 1.084 1.085l2.74-.242a2 2 0 0 0 1.24-.578l9.615-9.616m-4.243-4.242 4.243 4.242"
-                ></path>
-              </svg>
+    @media (prefers-color-scheme: dark) {
+      path {
+        stroke: white;
+      }
+    }
+  `}
+>
+  <path
+    stroke="#ffffff"
+    stroke-width="1.3"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+    d="m14.363 5.652 1.48-1.48a2 2 0 0 1 2.829 0l1.414 1.414a2 2 0 0 1 0 2.828l-1.48 1.48m-4.243-4.242-9.616 9.615a2 2 0 0 0-.578 1.238l-.242 2.74a1 1 0 0 0 1.084 1.085l2.74-.242a2 2 0 0 0 1.24-.578l9.615-9.616m-4.243-4.242 4.243 4.242"
+  ></path>
+</svg>
           </Button>
-
-      {userError ? (
-        <>
-          <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
-        </>
-      ) : user ? (
-        explorePosts && explorePosts.length > 0 ? (
-          <>
           <Search
             posts={explorePosts}
             isGlobalSearch={true}
@@ -158,6 +163,7 @@ export default function Explore() {
               margin-left: 0em
             `}
           ></Search>
+          </div>
           <ul
           css={css`
             list-style: none;
