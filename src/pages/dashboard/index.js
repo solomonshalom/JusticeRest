@@ -275,7 +275,6 @@ export default function Dashboard() {
   )
 }
 
-
 Dashboard.getLayout = function DashboardLayout(page) {
   return (
     <Container
