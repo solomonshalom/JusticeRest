@@ -101,21 +101,7 @@ export default function Explore() {
 
       </Header>
 
-      {userError ? (
-        <>
-          <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
-        </>
-      ) : user ? (
-        explorePosts && explorePosts.length > 0 ? (
-          <>
-          <div css={css`
-          display: flex;
-          flex-wrap: wrap;
-          gap: 1em;
-          width: 109%;
-        `}>
-          <Button
+      <Button
             outline
             css={css`
               font-size: 1.3rem;
@@ -128,6 +114,7 @@ export default function Explore() {
               router.push(`/dashboard/${newPostsId}`)
             }}
           >
+<<<<<<< HEAD
             <svg 
             width="21" 
             height="21" 
@@ -136,6 +123,16 @@ export default function Explore() {
             fill="none" 
             xmlns="http://www.w3.org/2000/svg" 
             color="#ffffff"
+=======
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="21px"
+              height="21px"
+              fill="none"
+              stroke-width="1.5"
+              viewBox="0 0 24 24"
+              color="#ffffff"
+>>>>>>> parent of bb151f9 (Hello! Mom)
               css={css`
                 margin: 0.2em 0 0 0.1em;
 
@@ -150,11 +147,31 @@ export default function Explore() {
                 }
               `}
             >
+<<<<<<< HEAD
             <path d="M3 15V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M15 3s-4.5 0-4.5 9H13c0 9 2 9 2 9" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
             <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
             </svg>
+=======
+                <path
+                  stroke="#ffffff"
+                  stroke-width="1.3"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="m14.363 5.652 1.48-1.48a2 2 0 0 1 2.829 0l1.414 1.414a2 2 0 0 1 0 2.828l-1.48 1.48m-4.243-4.242-9.616 9.615a2 2 0 0 0-.578 1.238l-.242 2.74a1 1 0 0 0 1.084 1.085l2.74-.242a2 2 0 0 0 1.24-.578l9.615-9.616m-4.243-4.242 4.243 4.242"
+                ></path>
+              </svg>
+>>>>>>> parent of bb151f9 (Hello! Mom)
           </Button>
+
+      {userError ? (
+        <>
+          <p>Oop, we&apos;ve had an error:</p>
+          <pre>{JSON.stringify(error)}</pre>
+        </>
+      ) : user ? (
+        explorePosts && explorePosts.length > 0 ? (
+          <>
           <Search
             posts={explorePosts}
             isGlobalSearch={true}
@@ -164,7 +181,6 @@ export default function Explore() {
               margin-left: 0em
             `}
           ></Search>
-          </div>
           <ul
           css={css`
             list-style: none;
