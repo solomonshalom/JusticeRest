@@ -132,10 +132,6 @@ export default function Explore() {
               width: 2.15em;
               height: 2.15em;
             `}
-            onClick={async () => {
-              const newPostsId = await createPostForUser(user.uid)
-              router.push(`/dashboard/${newPostsId}`)
-            }}
           >
             <svg 
             width="21" 
