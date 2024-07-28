@@ -174,12 +174,12 @@ export default function Dashboard() {
                   margin: 0.25em 0 0 0.05em;
 
                   path {
-                    stroke: black;
+                    stroke: white;
                   }
 
-                  @media (prefers-color-scheme: dark) {
+                  @media (prefers-color-scheme: light) {
                     path {
-                      stroke: white;
+                      stroke: black;
                     }
                   }
                 `}
