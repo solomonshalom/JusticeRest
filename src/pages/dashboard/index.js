@@ -163,27 +163,33 @@ export default function Dashboard() {
                 text-align: center;
               `}
               >
-              <svg xmlns="http://www.w3.org/2000/svg" 
-              width="1.1em" 
-              height="1.1em" 
-              fill="none" 
-              stroke-width="1.5" 
-              viewBox="0 0 24 24" 
-              css={css`
-                  margin: 0.25em 0 0 0.05em
+              <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="1.1em" 
+                height="1.1em" 
+                fill="none" 
+                stroke-width="1.5" 
+                viewBox="0 0 24 24" 
+                css={css`
+                  margin: 0.25em 0 0 0.05em;
 
-                path {
-                  stroke: black;
-                }
-
-                @media (prefers-color-scheme: dark) {
                   path {
-                    stroke: white;
+                    stroke: black;
                   }
-                }
-              `}
-                >
-                  <path stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" d="M7.9 8.08c0-4.773 7.5-4.773 7.5 0 0 3.409-3.409 2.727-3.409 6.818M12 19.01l.01-.011"></path>
+
+                  @media (prefers-color-scheme: dark) {
+                    path {
+                      stroke: white;
+                    }
+                  }
+                `}
+              >
+                <path 
+                  stroke-width="1.5" 
+                  stroke-linecap="round" 
+                  stroke-linejoin="round" 
+                  d="M7.9 8.08c0-4.773 7.5-4.773 7.5 0 0 3.409-3.409 2.727-3.409 6.818M12 19.01l.01-.011">
+                </path>
               </svg>
             </Button>
           </Link>
