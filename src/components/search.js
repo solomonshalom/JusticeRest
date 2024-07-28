@@ -94,7 +94,6 @@ export default function Search(props) {
       d="m17 17 4 4M3 11a8 8 0 1 0 16 0 8 8 0 0 0-16 0Z">
     </path>
   </svg>
-      </svg>
       <input
         id="search-posts"
         type="text"
@@ -105,6 +104,6 @@ export default function Search(props) {
           setSearchInput(e.target.value);
         }}
       />
-    </div>
+      </div>
   )
 }
