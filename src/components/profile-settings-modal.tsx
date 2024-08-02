@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import React from 'react';
 import { css } from '@emotion/react';
 import { useState, useEffect } from 'react';
 import * as Dialog from '@radix-ui/react-dialog';
@@ -12,7 +13,11 @@ import ModalOverlay from './modal-overlay';
 import Button, { IconButton } from './button';
 import { default as countryList } from 'country-list'; // Import country-list as a whole
 
-const StyledLabel = (props) => (
+interface StyledLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  children: React.ReactNode;
+}
+
+const StyledLabel: React.FC<StyledLabelProps> = (props) => (
   <label
     css={css`
       display: block;
@@ -34,8 +39,20 @@ const countryOptions = countries.map((country) => (
   </option>
 ));
 
-function Editor({ user }) {
-  const [clientUser, setClientUser] = useState({
+interface User {
+  id: string;
+  name: string;
+  displayName: string;
+  about: string;
+  posts: any[];
+  photo: string;
+  readingList: any[];
+  country?: string;
+}
+
+function Editor({ user }: { user: User }) {
+  const [clientUser, setClientUser] = useState<User>({
+    id: user.id,
     name: '',
     displayName: '',
     about: '',
@@ -44,7 +61,7 @@ function Editor({ user }) {
     readingList: [],
     country: '', // New state for selected country
   });
-  const [usernameErr, setUsernameErr] = useState(null);
+  const [usernameErr, setUsernameErr] = useState<string | null>(null);
 
   useEffect(() => {
     setClientUser(user);
@@ -75,7 +92,7 @@ function Editor({ user }) {
             id="profile-display-name"
             type="text"
             value={clientUser.displayName}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setClientUser((prevUser) => ({
                 ...prevUser,
                 displayName: e.target.value,
@@ -89,9 +106,9 @@ function Editor({ user }) {
             id="profile-username"
             type="text"
             value={clientUser.name}
-            onChange={(e) => {
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
               const lowercaseName = e.target.value.toLowerCase();
-              setUsernameErr(false);
+              setUsernameErr(null);
               setClientUser((prevUser) => ({
                 ...prevUser,
                 name: lowercaseName,
@@ -128,7 +145,7 @@ function Editor({ user }) {
               `}
             id="profile-country"
             value={clientUser.country}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
               setClientUser((prevUser) => ({
                 ...prevUser,
                 country: e.target.value,
@@ -144,7 +161,7 @@ function Editor({ user }) {
           <Textarea
             id="profile-about"
             value={clientUser.about}
-            onChange={(e) =>
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               setClientUser((prevUser) => ({
                 ...prevUser,
                 about: e.target.value,
@@ -193,7 +210,7 @@ function Editor({ user }) {
         }
         onClick={async () => {
           if (clientUser.name !== user.name) {
-            let nameClashing = await userWithNameExists(clientUser.name);
+            const nameClashing = await userWithNameExists(clientUser.name);
             if (nameClashing) {
               setUsernameErr('That username is in use already.');
               return;
@@ -211,10 +228,13 @@ function Editor({ user }) {
             }
           }
 
-          let toSave = { ...clientUser };
-          delete toSave.id;
-          await firestore.collection('users').doc(user.id).set(toSave);
-          setUsernameErr(null);
+          try {
+            await firestore.collection('users').doc(user.id).set(clientUser);
+            setUsernameErr(null);
+          } catch (error) {
+            console.error('Error saving user data:', error);
+            setUsernameErr('An error occurred while saving. Please try again.');
+          }
         }}
       >
         Save changes
@@ -224,8 +244,12 @@ function Editor({ user }) {
 }
 
 
-function ProfileEditor({ uid }) {
-  const [user, userLoading, userError] = useDocumentData(
+interface ProfileEditorProps {
+  uid: string;
+}
+
+function ProfileEditor({ uid }: ProfileEditorProps) {
+  const [user, userLoading, userError] = useDocumentData<User>(
     firestore.doc(`users/${uid}`),
     {
       idField: 'id',
@@ -246,11 +270,16 @@ function ProfileEditor({ uid }) {
   return <Spinner />;
 }
 
-export default function ProfileSettingsModal(props) {
+interface ProfileSettingsModalProps {
+  uid: string;
+  Trigger: React.ComponentType;
+}
+
+export default function ProfileSettingsModal({ uid, Trigger }: ProfileSettingsModalProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger>
-        <props.Trigger />
+        <Trigger />
       </Dialog.Trigger>
 
       <ModalOverlay />
@@ -288,17 +317,18 @@ export default function ProfileSettingsModal(props) {
         >
           If logged in anonymous, make sure not to sign out as you will lose your access to the account.
         </Dialog.Description>
-        <ProfileEditor uid={props.uid} />
+        <ProfileEditor uid={uid} />
 
-        <Dialog.Close
-          as={IconButton}
-          css={css`
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-          `}
-        >
-          <Cross2Icon />
+        <Dialog.Close asChild>
+          <IconButton
+            css={css`
+              position: absolute;
+              top: 1rem;
+              right: 1rem;
+            `}
+          >
+            <Cross2Icon />
+          </IconButton>
         </Dialog.Close>
       </Dialog.Content>
     </Dialog.Root>

@@ -1,14 +1,24 @@
 // Those sweet writer links for them to share it to the world <3
 
 /** @jsxImportSource @emotion/react */
+import React, { useEffect, useState, useCallback } from 'react'
 import Head from 'next/head'
-import tinykeys from 'tinykeys'
+import { useRouter } from 'next/router'
 import { css } from '@emotion/react'
-import { useEffect, useState } from 'react'
+import tinykeys from 'tinykeys'
 import StarterKit from '@tiptap/starter-kit'
-import router, { useRouter } from 'next/router'
+import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useDocumentData } from 'react-firebase-hooks/firestore'
+import { NextPage } from 'next'
+import Text from '@tiptap/extension-text'
+import Link from '@tiptap/extension-link'
+import Image from '@tiptap/extension-image'
+import Document from '@tiptap/extension-document'
+import Paragraph from '@tiptap/extension-paragraph'
+import Placeholder from '@tiptap/extension-placeholder'
+import Highlight from '@tiptap/extension-highlight'
+import * as Dialog from '@radix-ui/react-dialog'
 import {
   ArrowLeftIcon,
   Cross2Icon,
@@ -20,23 +30,8 @@ import {
   StrikethroughIcon,
   Pencil1Icon
 } from '@radix-ui/react-icons'
-import { useEditor, EditorContent, BubbleMenu } from '@tiptap/react'
-
-import Text from '@tiptap/extension-text'
-import Link from '@tiptap/extension-link'
-import Image from '@tiptap/extension-image'
-import Document from '@tiptap/extension-document'
-import Paragraph from '@tiptap/extension-paragraph'
-import Placeholder from '@tiptap/extension-placeholder'
-
-// Adding support for highlight in tiptap
-import Highlight from '@tiptap/extension-highlight'
-
-import * as Dialog from '@radix-ui/react-dialog'
-
 import firebase, { auth, firestore } from '../../lib/firebase'
-import { postWithUserIDAndSlugExists, removePostForUser } from '../../lib/db'
-
+import { postWithUserIDAndSlugExists, removePostForUser, updatePostCategory } from '../../lib/db'
 import Input from '../../components/input'
 import Spinner from '../../components/spinner'
 import Container from '../../components/container'
@@ -44,7 +39,11 @@ import ModalOverlay from '../../components/modal-overlay'
 import PostContainer from '../../components/post-container'
 import Button, { IconButton, LinkIconButton } from '../../components/button'
 
-const StyledLabel = (props) => (
+interface StyledLabelProps extends React.LabelHTMLAttributes<HTMLLabelElement> {
+  children: React.ReactNode;
+}
+
+const StyledLabel: React.FC<StyledLabelProps> = ({ children, ...props }) => (
   <label
     css={css`
       display: block;
@@ -54,14 +53,22 @@ const StyledLabel = (props) => (
     `}
     {...props}
   >
-    {props.children}
+    {children}
   </label>
 );
 
 
-function SelectionMenu({ editor }) {
-  const [editingLink, setEditingLink] = useState(false)
-  const [url, setUrl] = useState('')
+interface SelectionMenuProps {
+  editor: ReturnType<typeof useEditor> | null;
+}
+
+function SelectionMenu({ editor }: SelectionMenuProps) {
+  const [editingLink, setEditingLink] = useState<boolean>(false)
+  const [url, setUrl] = useState<string>('')
+
+  if (!editor) {
+    return null;
+  }
 
   return (
     <BubbleMenu
@@ -133,7 +140,7 @@ function SelectionMenu({ editor }) {
             <ArrowLeftIcon />
           </button>
           <form
-            onSubmit={e => {
+            onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
               e.preventDefault()
 
               editor
@@ -150,7 +157,7 @@ function SelectionMenu({ editor }) {
               type="url"
               value={url}
               placeholder="https://example.com"
-              onChange={e => {
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                 setUrl(e.target.value)
               }}
             />
@@ -175,7 +182,7 @@ function SelectionMenu({ editor }) {
           </button>
 
           {/* Gotta fix; Showing Yellow instead of Purple
-          <button 
+          <button
             onClick={() => editor.chain().focus().toggleHighlight({ color: '#7628AD' }).run()}
             className={editor.isActive('highlight', { color: '#7628AD' }) ? 'is-active' : ''}
           >
@@ -183,7 +190,7 @@ function SelectionMenu({ editor }) {
            <Pencil1Icon />
            </button>
            */}
-           
+
           <button
             onClick={() => editor.chain().focus().toggleStrike().run()}
             className={editor.isActive('strike') ? 'is-active' : ''}
@@ -209,11 +216,28 @@ function SelectionMenu({ editor }) {
   )
 }
 
-function Editor({ post }) {
-  const [userdata] = useDocumentData(firestore.doc(`users/${post.author}`), {
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  slug: string;
+  excerpt: string;
+  published: boolean;
+  category: string;
+  author: string;
+  lastEdited: firebase.firestore.Timestamp;
+}
+
+interface EditorProps {
+  post: Post;
+}
+
+function Editor({ post }: EditorProps) {
+  const [userdata] = useDocumentData<{ name: string }>(firestore.doc(`users/${post.author}`), {
     idField: 'id',
   })
-  const [clientPost, setClientPost] = useState({
+  const [clientPost, setClientPost] = useState<Post>({
+    ...post,
     title: '',
     content: '',
     slug: '',
@@ -223,7 +247,7 @@ function Editor({ post }) {
   });
 
   // Function to handle category change
-  const handleCategoryChange = async (e) => {
+  const handleCategoryChange = async (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newCategory = e.target.value;
     setClientPost((prevPost) => ({
       ...prevPost,
@@ -232,24 +256,24 @@ function Editor({ post }) {
     await updatePostCategory(post.id, newCategory);
   };
 
-  const [slugErr, setSlugErr] = useState(false)
+  const [slugErr, setSlugErr] = useState<boolean>(false)
 
   useEffect(() => {
     setClientPost(post)
   }, [post])
 
-  async function saveChanges() {
-    let toSave = {
+  const saveChanges = useCallback(async () => {
+    const toSave: Partial<Post> = {
       ...clientPost,
       lastEdited: firebase.firestore.Timestamp.now(),
     };
     delete toSave.id; // since we get the id from the document not the data
     await firestore.collection('posts').doc(post.id).set(toSave);
-  }
+  }, [clientPost, post.id]);
 
   useEffect(() => {
-    let unsubscribe = tinykeys(window, {
-      '$mod+KeyS': e => {
+    const unsubscribe = tinykeys(window, {
+      '$mod+KeyS': (e: KeyboardEvent) => {
         e.preventDefault()
         saveChanges()
       },
@@ -258,7 +282,7 @@ function Editor({ post }) {
     return () => {
       unsubscribe()
     }
-  })
+  }, [saveChanges])
 
   const ParagraphDocument = Document.extend({ content: 'paragraph' })
 
@@ -320,7 +344,7 @@ function Editor({ post }) {
   function addImage() {
     const url = window.prompt('URL')
 
-    if (url) {
+    if (url && contentEditor) {
       contentEditor.chain().focus().setImage({ src: url }).run()
     }
   }
@@ -333,20 +357,16 @@ function Editor({ post }) {
             ? `Editing post: ${clientPost.title} / JusticeRest`
             : 'Editing...'}
         </title>
-
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
-
         <link
+          rel="stylesheet"
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
-          rel="stylesheet"
         />
         <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
           rel="stylesheet"
+          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
         />
-
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
 
       <header
@@ -440,7 +460,7 @@ function Editor({ post }) {
                       type="text"
                       id="post-slug"
                       value={clientPost.slug}
-                      onChange={e => {
+                      onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
                         setSlugErr(false)
                         setClientPost(prevPost => ({
                           ...prevPost,
@@ -463,10 +483,10 @@ function Editor({ post }) {
                   <IconButton
                     type="submit"
                     disabled={clientPost.slug === post.slug || !clientPost.slug}
-                    onClick={async e => {
+                    onClick={async (e: React.MouseEvent<HTMLButtonElement>) => {
                       e.preventDefault()
 
-                      let slugClashing = await postWithUserIDAndSlugExists(
+                      const slugClashing = await postWithUserIDAndSlugExists(
                         post.author,
                         clientPost.slug,
                       )
@@ -479,7 +499,7 @@ function Editor({ post }) {
                         return
                       }
 
-                      let postCopy = { ...post }
+                      const postCopy = { ...post }
                       delete postCopy.id
                       postCopy.slug = clientPost.slug
                       await firestore
@@ -588,9 +608,7 @@ function Editor({ post }) {
                   justice.rest/{userdata.name}/{post.slug}
                 </a>
               </p>
-            ) : (
-              ''
-            )}
+            ) : null}
 
             <Dialog.Close
               as={IconButton}
@@ -613,9 +631,7 @@ function Editor({ post }) {
           margin-top: 5rem;
           margin-bottom: 2.5rem;
         `}
-        onClick={() => {
-          addImage()
-        }}
+        onClick={addImage}
       >
         + Image
       </Button>
@@ -656,42 +672,45 @@ function Editor({ post }) {
   )
 }
 
-export default function PostEditor() {
-  const router = useRouter()
-  const [user, userLoading, userError] = useAuthState(auth)
-  const [post, postLoading, postError] = useDocumentData(
-    firestore.doc(`posts/${router.query.pid}`),
+const PostEditor: NextPage = () => {
+  const router = useRouter();
+  const [user, userLoading, userError] = useAuthState(auth);
+  const [post, postLoading, postError] = useDocumentData<Post | undefined>(
+    router.query.pid ? firestore.doc(`posts/${router.query.pid}`) : null,
     {
       idField: 'id',
-    },
-  )
+    }
+  );
 
   useEffect(() => {
-    if (!user && !userLoading && !userError) {
-      router.push('/')
-      return
-    } else if (!post && !postLoading && !postError) {
-      router.push('/')
-      return
+    if (!userLoading && !user) {
+      router.push('/');
+    } else if (!postLoading && !post) {
+      router.push('/dashboard');
     }
-  }, [router, user, userLoading, userError, post, postLoading, postError])
+  }, [router, user, userLoading, post, postLoading]);
 
   if (userError || postError) {
     return (
       <>
-        <p>Oop, we&apos;ve had an error:</p>
-        <pre>{JSON.stringify(userError)}</pre>
-        <pre>{JSON.stringify(postError)}</pre>
+        <p>Oops, we&apos;ve had an error:</p>
+        <pre>{JSON.stringify(userError || postError)}</pre>
       </>
-    )
-  } else if (post) {
-    return <Editor post={post} />
+    );
   }
 
-  return <Spinner />
-}
+  if (userLoading || postLoading) {
+    return <Spinner />;
+  }
 
-PostEditor.getLayout = function PostEditorLayout(page) {
+  if (post) {
+    return <Editor post={post} />;
+  }
+
+  return null;
+};
+
+PostEditor.getLayout = function PostEditorLayout(page: React.ReactElement) {
   return (
     <Container
       maxWidth="640px"
@@ -701,5 +720,7 @@ PostEditor.getLayout = function PostEditorLayout(page) {
     >
       {page}
     </Container>
-  )
-}
+  );
+};
+
+export default PostEditor;

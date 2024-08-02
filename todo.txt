@@ -1,0 +1,35 @@
+TypeScript Refactoring Todo List:
+
+- [x] src/components/post-container.tsx: Add explicit type for 'props' parameter
+- [x] src/components/search.tsx: Add explicit types for 'props' and 'event' parameters
+- [x] src/components/search.tsx: Fix type errors related to 'css' property in JSX elements
+- [x] src/lib/db.tsx: Add explicit types for all function parameters (id, name, uid, pid, username, slug)
+- [x] src/lib/db.tsx: Fix 'user' object type to include 'posts' property
+- [x] src/lib/db.tsx: Add null checks for 'user' object before accessing properties
+- [x] src/lib/utils.tsx: Address any TypeScript errors (details not provided in the output)
+- [x] src/pages/[username]/[slug].tsx: Fix TypeScript errors (details not provided in the output)
+- [x] src/pages/[username]/index.tsx: Fix TypeScript errors (details not provided in the output)
+- [x] src/pages/_app.tsx: Address TypeScript errors on lines 120-122
+- [x] src/pages/api/user/[username].tsx: Fix TypeScript errors related to the response data type, ensuring that the types used in the API route match the expected definitions.
+- [x] src/pages/dashboard/[pid].tsx: Address TypeScript errors, particularly around line 47
+- [x] src/pages/dashboard/index.tsx: Fix useEffect dependencies and missing 'posts' dependency
+- [x] src/pages/dashboard/list.tsx: Address useEffect dependency issues and other TypeScript errors
+- [x] src/pages/explore/index.tsx: Add explicit types for all function parameters
+- [x] src/pages/explore/index.tsx: Fix type errors related to 'filteredPosts' and 'post' objects
+- [x] src/pages/explore/index.tsx: Correct usage of 'user?.uid' in ProfileSettingsModal component
+- [x] src/pages/explore/index.tsx: Address 'error' variable usage (possibly undefined)
+- [x] src/pages/explore/index.tsx: Fix type errors in the rendering of post list items
+- [x] Review and update any custom type definitions or interfaces to ensure they cover all used properties
+- [x] Ensure all imported types from external libraries are correctly used throughout the project
+- [x] Review and update tsconfig.json to ensure all necessary options are set correctly for the project
+- [x] Run linter after each file refactor to catch and fix any new TypeScript-related warnings
+- [x] Test the application functionality after completing the TypeScript conversion to ensure no regressions
+
+Remaining tasks:
+- [x] Implement proper error handling and type checking in async functions
+- [x] Ensure consistent use of React.FC for functional components
+- [x] Add proper types for state variables in useState hooks
+- [x] Review and update prop types for all components
+- [x] Implement proper typing for Firebase-related functions and data
+
+All tasks completed. TypeScript refactoring process finished.

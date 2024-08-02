@@ -13,7 +13,11 @@ import Container from '../components/container'
 import Button, { LinkButton } from '../components/button'
 
 export default function Home() {
-  const [user, loading, error] = useAuthState(auth)
+  const [user, loading, error] = useAuthState(auth) as [
+    firebase.User | null,
+    boolean,
+    firebase.auth.Error | undefined
+  ];
 
   if (error) {
     return (
@@ -233,17 +237,19 @@ export default function Home() {
               onClick={() => {
                 const googleAuthProvider = new firebase.auth.GoogleAuthProvider()
                 auth.signInWithPopup(googleAuthProvider).then(async cred => {
-                  let userExists = await userWithIDExists(cred.user.uid)
+                  if (cred.user) {
+                    const userExists = await userWithIDExists(cred.user.uid)
 
-                  if (!userExists) {
-                    await setUser(cred.user.uid, {
-                      name: cred.user.uid,
-                      displayName: cred.user.displayName || 'Anonymous',
-                      about: 'hii',
-                      posts: [],
-                      photo: cred.user.photoURL,
-                      readingList: [],
-                    })
+                    if (!userExists) {
+                      await setUser(cred.user.uid, {
+                        name: cred.user.uid,
+                        displayName: cred.user.displayName || 'Anonymous',
+                        about: 'hii',
+                        posts: [],
+                        photo: cred.user.photoURL || '',
+                        readingList: [],
+                      })
+                    }
                   }
                 })
               }}
@@ -277,7 +283,7 @@ export default function Home() {
   )
 }
 
-Home.getLayout = function HomeLayout(page) {
+Home.getLayout = function HomeLayout(page: React.ReactElement) {
   return (
     <Container maxWidth="420px">
       <Head>
