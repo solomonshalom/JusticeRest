@@ -1,7 +1,6 @@
-import { useEffect, useState } from 'react'
-
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react'
+import React, { useEffect, useState } from 'react'
+import { css, SerializedStyles } from '@emotion/react'
 
 const inputStyles = css`
   display: block;
@@ -18,92 +17,97 @@ const inputStyles = css`
   }
 `
 
-export default function Search(props) {
-  const [searchInput, setSearchInput] = useState('');
-  const searchBarPlaceholder = props.isGlobalSearch ? 'Search published posts...' : 'Search your posts...'
+interface SearchProps {
+  isGlobalSearch: boolean;
+  getSearchInput: (input: string) => void;
+  posts?: Array<{ title: string }>;
+  getFilteredPosts?: (posts: Array<{ title: string }>) => void;
+}
 
-  const handleKeyDown = (event) => {
-    if (props.isGlobalSearch) {
+export default function Search({ isGlobalSearch, getSearchInput, posts, getFilteredPosts }: SearchProps) {
+  const [searchInput, setSearchInput] = useState('');
+  const searchBarPlaceholder = isGlobalSearch ? 'Search published posts...' : 'Search your posts...'
+
+  const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (isGlobalSearch) {
       if (event.key === 'Enter') {
         console.log('do validate')
-        props.getSearchInput(searchInput);
+        getSearchInput(searchInput);
       }
     }
   }
 
   useEffect(() => {
-    if (props.isGlobalSearch) {
-      
+    if (isGlobalSearch) {
+      // Do nothing for global search
     } else {
       const delayDebounceFn = setTimeout(() => {
-        if (props.posts) {
+        if (posts) {
           filterPosts();
-          props.getSearchInput(searchInput);
+          getSearchInput(searchInput);
         }
       }, 500)
-  
+
       return () => clearTimeout(delayDebounceFn)
     }
-  }, [searchInput])
+  }, [searchInput, isGlobalSearch, posts, getSearchInput])
 
   const filterPosts = () => {
-    if (props.isGlobalSearch) {
+    if (isGlobalSearch) {
       console.log('Do global search')
-    } else {
-      let tempPosts = props.posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
-      props.getFilteredPosts(tempPosts);
+    } else if (posts && getFilteredPosts) {
+      let tempPosts = posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
+      getFilteredPosts(tempPosts);
     }
   }
 
-  const exploreSearchBarStyles = 
-    props.isGlobalSearch ?
+  const exploreSearchBarStyles: SerializedStyles =
+    isGlobalSearch ?
       css`width: 80%`    // Explore page search bar styles
       :
       css`width: 80%`     // Dashboard page search bar styles
 
   return (
-    <div
-    css={exploreSearchBarStyles}
-    >
-   <svg 
-    xmlns="http://www.w3.org/2000/svg" 
-    width="1.1em" 
-    height="1.1em" 
-    fill="none" 
-    stroke-width="1.5" 
-    viewBox="0 0 24 24"
-    css={css`
-      position: absolute;
-      margin: 0.8em;
+    <div css={exploreSearchBarStyles}>
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="1.1em"
+        height="1.1em"
+        fill="none"
+        strokeWidth="1.5"
+        viewBox="0 0 24 24"
+        css={css`
+          position: absolute;
+          margin: 0.8em;
 
-      path {
-        stroke: black;
-      }
+          path {
+            stroke: black;
+          }
 
-      @media (prefers-color-scheme: dark) {
-        path {
-          stroke: white;
-        }
-      }
-    `}
-  >
-    <path 
-      stroke-width="1.5" 
-      stroke-linecap="round" 
-      stroke-linejoin="round" 
-      d="m17 17 4 4M3 11a8 8 0 1 0 16 0 8 8 0 0 0-16 0Z">
-    </path>
-  </svg>
+          @media (prefers-color-scheme: dark) {
+            path {
+              stroke: white;
+            }
+          }
+        `}
+      >
+        <path
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          d="m17 17 4 4M3 11a8 8 0 1 0 16 0 8 8 0 0 0-16 0Z">
+        </path>
+      </svg>
       <input
         id="search-posts"
         type="text"
         placeholder={searchBarPlaceholder}
         onKeyDown={handleKeyDown}
-        css={css`${inputStyles}`}
-        onChange={e => {
+        css={inputStyles}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => {
           setSearchInput(e.target.value);
         }}
       />
-      </div>
+    </div>
   )
 }
