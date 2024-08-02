@@ -19,15 +19,17 @@ TypeScript Refactoring Todo List:
 - [x] src/pages/explore/index.tsx: Correct usage of 'user?.uid' in ProfileSettingsModal component
 - [x] src/pages/explore/index.tsx: Address 'error' variable usage (possibly undefined)
 - [x] src/pages/explore/index.tsx: Fix type errors in the rendering of post list items
-- [-] Review and update any custom type definitions or interfaces to ensure they cover all used properties
-- [ ] Ensure all imported types from external libraries are correctly used throughout the project
-- [ ] Review and update tsconfig.json to ensure all necessary options are set correctly for the project
-- [ ] Run linter after each file refactor to catch and fix any new TypeScript-related warnings
-- [ ] Test the application functionality after completing the TypeScript conversion to ensure no regressions
+- [x] Review and update any custom type definitions or interfaces to ensure they cover all used properties
+- [x] Ensure all imported types from external libraries are correctly used throughout the project
+- [x] Review and update tsconfig.json to ensure all necessary options are set correctly for the project
+- [x] Run linter after each file refactor to catch and fix any new TypeScript-related warnings
+- [x] Test the application functionality after completing the TypeScript conversion to ensure no regressions
 
 Remaining tasks:
 - [x] Implement proper error handling and type checking in async functions
-- [ ] Ensure consistent use of React.FC for functional components
-- [ ] Add proper types for state variables in useState hooks
-- [ ] Review and update prop types for all components
-- [ ] Implement proper typing for Firebase-related functions and data
+- [x] Ensure consistent use of React.FC for functional components
+- [x] Add proper types for state variables in useState hooks
+- [x] Review and update prop types for all components
+- [x] Implement proper typing for Firebase-related functions and data
+
+All tasks completed. TypeScript refactoring process finished.
