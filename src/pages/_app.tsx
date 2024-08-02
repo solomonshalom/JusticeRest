@@ -3,11 +3,19 @@ import Head from 'next/head'
 import { ThemeProvider } from 'next-themes'
 import { Global, css } from '@emotion/react'
 import { IdProvider } from '@radix-ui/react-id'
-import { AppProps } from 'next/app';
+import { AppProps } from 'next/app'
+import { ReactElement, ReactNode } from 'react'
 
+type NextPageWithLayout = AppProps['Component'] & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
 
-const App = ({ Component, pageProps }) => {
-  const getLayout = Component.getLayout || (page => page)
+interface MyAppProps extends AppProps {
+  Component: NextPageWithLayout
+}
+
+const App = ({ Component, pageProps }: MyAppProps) => {
+  const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
     <>
@@ -110,7 +118,7 @@ const App = ({ Component, pageProps }) => {
         `}
       />
       <IdProvider>
-        <ThemeProvider defaultTheme="system">
+        <ThemeProvider attribute="class" defaultTheme="system">
           {getLayout(<Component {...pageProps} />)}
         </ThemeProvider>
       </IdProvider>
