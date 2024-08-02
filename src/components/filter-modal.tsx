@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import React, { useState } from 'react';
 import { css } from '@emotion/react';
-import { Root, Trigger, Portal, Overlay, Content, Title, Description, Close } from '@radix-ui/react-dialog';
+import * as Dialog from '@radix-ui/react-dialog';
 import countryList, { Country } from 'country-list';
 
 const countries: Country[] = countryList.getData(); // Fetch the data directly
