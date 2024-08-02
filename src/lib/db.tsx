@@ -3,8 +3,11 @@ import firebase, { firestore } from './firebase'
 interface User {
   id: string;
   name: string;
+  displayName: string;
   posts: Post[];
-  // Add other user properties as needed
+  photo: string;
+  about: string;
+  readingList: string[];
 }
 
 interface Post {
@@ -16,7 +19,7 @@ interface Post {
   published: boolean;
   lastEdited: firebase.firestore.Timestamp;
   slug: string;
-  // Add other post properties as needed
+  category?: string;
 }
 
 export async function userWithIDExists(id: string): Promise<boolean> {
@@ -36,7 +39,7 @@ export async function userWithNameExists(name: string): Promise<boolean> {
 export async function getUserByID(id: string): Promise<User> {
   const doc = await firestore.collection('users').doc(id).get()
   if (!doc.exists) {
-    throw { code: 'user/not-found' }
+    throw new Error('user/not-found')
   }
 
   const userData = doc.data() as Omit<User, 'id' | 'posts'> & { posts: string[] }
@@ -49,22 +52,24 @@ export async function getUserByName(name: string): Promise<User> {
   const query = await firestore
     .collection('users')
     .where('name', '==', name)
+    .limit(1)
     .get()
 
-  if (query.empty || !query.docs[0].exists) {
-    throw { code: 'user/not-found' }
+  if (query.empty) {
+    throw new Error('user/not-found')
   }
 
-  const userData = query.docs[0].data() as Omit<User, 'id' | 'posts'> & { posts: string[] }
+  const doc = query.docs[0]
+  const userData = doc.data() as Omit<User, 'id' | 'posts'> & { posts: string[] }
   const posts = await Promise.all(userData.posts.map(postId => getPostByID(postId)))
 
-  return { id: query.docs[0].id, ...userData, posts }
+  return { id: doc.id, ...userData, posts }
 }
 
 export async function getPostByID(id: string): Promise<Post> {
   const doc = await firestore.collection('posts').doc(id).get()
   if (!doc.exists) {
-    throw { code: 'post/not-found' }
+    throw new Error('post/not-found')
   }
 
   return { id: doc.id, ...doc.data() } as Post
@@ -97,7 +102,7 @@ export async function getPostByUsernameAndSlug(username: string, slug: string): 
   const user = await getUserByName(username)
   const post = user.posts.find(post => post.slug === slug)
   if (!post) {
-    throw { code: 'post/not-found' }
+    throw new Error('post/not-found')
   }
 
   return post

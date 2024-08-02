@@ -1,7 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import Button from '../components/button';
 import firebase, { auth } from '../lib/firebase';
-import { setUser, userWithIDExists } from '../lib/db';
+import { setUser, userWithIDExists, User } from '../lib/db';
 import { css } from '@emotion/react';
 
 const AnonymousLoginButton: React.FC = () => {
@@ -22,26 +22,27 @@ const AnonymousLoginButton: React.FC = () => {
 
     try {
       const cred = await auth.signInAnonymously();
-      if (cred.user) {
-        const userExists = await userWithIDExists(cred.user.uid);
+      if (!cred.user) {
+        throw new Error('User object is null after anonymous sign-in');
+      }
 
-        if (!userExists) {
-          // Create a new user with the generated avatar seed and style
-          await setUser(cred.user.uid, {
-            name: cred.user.uid,
-            displayName: 'Anonymous',
-            about: 'Hii, change this text to add your very own little bio!',
-            posts: [],
-            readingList: [],
-            // Everytime a new anonymous user creates an account, the below API will create a randomized PFP for them.
-            photo: `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}`,
-          });
-        }
-      } else {
-        console.error('User object is null after anonymous sign-in');
+      const userExists = await userWithIDExists(cred.user.uid);
+
+      if (!userExists) {
+        const userData: Partial<User> = {
+          name: cred.user.uid,
+          displayName: 'Anonymous',
+          posts: [], // This is correct as User.posts is defined as string[]
+          photo: `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}`,
+          about: 'Hii, change this text to add your very own little bio!',
+          readingList: [],
+        };
+
+        await setUser(cred.user.uid, userData);
       }
     } catch (error) {
       console.error('Error during anonymous sign-in:', error);
+      // You might want to show an error message to the user here
     }
   };
 

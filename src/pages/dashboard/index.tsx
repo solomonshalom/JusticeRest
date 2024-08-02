@@ -7,6 +7,7 @@ import { useRouter } from 'next/router'
 import { htmlToText } from 'html-to-text'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
+import firebase from 'firebase/app'
 
 import { createPostForUser } from '../../lib/db'
 import { firestore, auth } from '../../lib/firebase'
@@ -15,11 +16,19 @@ import Button from '../../components/button'
 import Header from '../../components/header'
 import Spinner from '../../components/spinner'
 import Container from '../../components/container'
-import Search from '../../components/search'
+import Search, { SearchProps } from '../../components/search'
 import ProfileSettingsModal from '../../components/profile-settings-modal'
 
-function formatDate(date) {
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+interface Post {
+  id: string;
+  title: string;
+  content: string;
+  lastEdited: firebase.firestore.Timestamp;
+  published: boolean;
+}
+
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
@@ -27,11 +36,11 @@ export default function Dashboard() {
   const router = useRouter()
 
   const [user, userLoading, userError] = useAuthState(auth)
-  const [posts, postsLoading, postsError] = useCollectionData(
+  const [posts, postsLoading, postsError] = useCollectionData<Post>(
     firestore.collection('posts').where('author', '==', user ? user.uid : ''),
     { idField: 'id' },
   )
-  const [filteredPosts, setFilteredPosts] = useState([]);
+  const [filteredPosts, setFilteredPosts] = useState<Post[]>([]);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -43,16 +52,18 @@ export default function Dashboard() {
 
   // Set initial filteredPosts
   useEffect(() => {
-    setFilteredPosts(posts)
-  }, posts)
+    if (posts) {
+      setFilteredPosts(posts as Post[])
+    }
+  }, [posts])
 
   // Get the filtered posts from Search component
-  const getFilteredPosts = (fp) => {
-    setFilteredPosts(fp)
+  const getFilteredPosts = (fp: { title: string }[]) => {
+    setFilteredPosts(fp as Post[])
   }
 
   // Get the searchInput from Search component
-  const getSearchInput = (searchInput) => {
+  const getSearchInput = (searchInput: string) => {
     return searchInput
   }
 
@@ -68,13 +79,20 @@ export default function Dashboard() {
         <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M14 9.1a4.9 4.9 0 1 1-9.8 0 4.9 4.9 0 0 1 9.8 0m-.967 4.922a6.3 6.3 0 1 1 .99-.99l3.973 3.972a.7.7 0 0 1-.991.991z" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>
         </Link>
 
-        <Link href="#" onClick={() => console.log('Profile clicked')} 
+        <Link href="#" onClick={() => console.log('Profile clicked')}
           css={css`
-          &:hover { 
-          var(--grey-3); 
+          &:hover {
+            color: var(--grey-3);
           }
           `}>
-          <ProfileSettingsModal Trigger={() => <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5 1.225a5.075 5.075 0 0 0-1.408 9.953c-1.672.203-3.105.794-4.186 1.859-1.375 1.354-2.071 3.371-2.071 6.003a.665.665 0 1 0 1.33 0c0-2.408.634-4.032 1.674-5.057 1.042-1.026 2.598-1.558 4.661-1.558s3.619.532 4.662 1.558c1.039 1.026 1.673 2.649 1.673 5.057a.665.665 0 1 0 1.33 0c0-2.632-.696-4.648-2.072-6.003-1.078-1.064-2.513-1.656-4.185-1.859A5.078 5.078 0 0 0 10.5 1.225M6.755 6.3a3.745 3.745 0 1 1 7.49 0 3.745 3.745 0 0 1-7.49 0" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>} uid={user?.uid} />
+          <ProfileSettingsModal
+            Trigger={() => (
+              <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10.5 1.225a5.075 5.075 0 0 0-1.408 9.953c-1.672.203-3.105.794-4.186 1.859-1.375 1.354-2.071 3.371-2.071 6.003a.665.665 0 1 0 1.33 0c0-2.408.634-4.032 1.674-5.057 1.042-1.026 2.598-1.558 4.661-1.558s3.619.532 4.662 1.558c1.039 1.026 1.673 2.649 1.673 5.057a.665.665 0 1 0 1.33 0c0-2.632-.696-4.648-2.072-6.003-1.078-1.064-2.513-1.656-4.185-1.859A5.078 5.078 0 0 0 10.5 1.225M6.755 6.3a3.745 3.745 0 1 1 7.49 0 3.745 3.745 0 0 1-7.49 0" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/>
+              </svg>
+            )}
+            uid={user?.uid || ''}
+          />
         </Link>
 
           {/* Sign out */}
@@ -142,11 +160,11 @@ export default function Dashboard() {
           </Button>
 
           <Search
-            posts={posts}
+            posts={posts as { title: string }[]}
             isGlobalSearch={false}
-            getFilteredPosts={getFilteredPosts}
+            getFilteredPosts={(filteredPosts: { title: string }[]) => getFilteredPosts(filteredPosts as Post[])}
             getSearchInput={getSearchInput}
-          ></Search>
+          />
           
           <Link href="https://justice.rest/solomon/jr">
             <Button
@@ -184,10 +202,10 @@ export default function Dashboard() {
                   }
                 `}
               >
-                <path 
-                  stroke-width="1.5" 
-                  stroke-linecap="round" 
-                  stroke-linejoin="round" 
+                <path
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   d="M7.9 8.08c0-4.773 7.5-4.773 7.5 0 0 3.409-3.409 2.727-3.409 6.818M12 19.01l.01-.011">
                 </path>
               </svg>
@@ -196,7 +214,7 @@ export default function Dashboard() {
         </div>
           { posts.length > 0 ?
           <div>
-            { filteredPosts?.length === 0 && getSearchInput.length > 0 ? (
+            { filteredPosts?.length === 0 && getSearchInput('').length > 0 ? (
               <p
                 css={css`
                   margin-top: 2rem;
@@ -217,7 +235,7 @@ export default function Dashboard() {
                         b.lastEdited.toDate().getTime() -
                         a.lastEdited.toDate().getTime(),
                     )
-                    .map(post => (
+                    .map((post: Post) => (
                       <li
                         key={post.id}
                         css={css`
@@ -299,7 +317,7 @@ export default function Dashboard() {
   )
 }
 
-Dashboard.getLayout = function DashboardLayout(page) {
+Dashboard.getLayout = function DashboardLayout(page: React.ReactElement) {
   return (
     <Container
       maxWidth="640px"
@@ -309,9 +327,7 @@ Dashboard.getLayout = function DashboardLayout(page) {
     >
       <Head>
         <title>Dashboard / JusticeRest</title>
-
         <script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
-      
         <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
         <meta name="mobile-web-app-capable" content="yes" />
       </Head>

@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import Link from 'next/link'
 import Head from 'next/head'
+import Script from 'next/script'
 import { css } from '@emotion/react'
 import sanitize from 'sanitize-html'
 import { htmlToText } from 'html-to-text'
@@ -15,16 +16,62 @@ import Container from '../../components/container'
 import { IconButton } from '../../components/button'
 import PostContainer from '../../components/post-container'
 
-function AddToReadingListButton({ uid, pid }) {
-  const [user, setUser] = useState({ readingList: [] })
-  const [inList, setInList] = useState(false)
+interface Post {
+  id: string;
+  title: string;
+  excerpt: string;
+  content: string;
+  author: Author;
+  lastEdited: number;
+  slug: string;
+  published: boolean;
+}
+
+interface Author {
+  name: string;
+  displayName: string;
+  photo: string;
+}
+
+interface User {
+  id: string;
+  name: string;
+  displayName: string;
+  photo: string;
+  readingList: string[];
+  about?: string;
+  posts?: string[];
+}
+
+interface AddToReadingListButtonProps {
+  uid: string;
+  pid: string;
+}
+
+function AddToReadingListButton({ uid, pid }: AddToReadingListButtonProps) {
+  const [user, setUser] = useState<User>({ id: '', name: '', displayName: '', photo: '', readingList: [] })
+  const [inList, setInList] = useState<boolean>(false)
 
   useEffect(() => {
-    ;(async () => {
-      const data = await getUserByID(uid)
-      setUser(data)
-    })()
-  }, [uid])
+    (async () => {
+      try {
+        const data = await getUserByID(uid);
+        if (data) {
+          setUser({
+            id: data.id,
+            name: data.name,
+            displayName: data.displayName,
+            photo: data.photo,
+            readingList: data.readingList || [],
+            about: data.about,
+            posts: data.posts
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching user data:', error);
+      }
+    })();
+  }, [uid]);
 
   useEffect(() => {
     setInList(user.readingList.includes(pid))
@@ -92,13 +139,29 @@ function AddToReadingListButton({ uid, pid }) {
   )
 }
 
-function formatDate(date) {
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
+function formatDate(date: Date): string {
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
   return new Intl.DateTimeFormat('en-US', options).format(date);
 }
 
-export default function Post({ post }) {
-  const [user, _loading, _error] = useAuthState(auth)
+interface PostProps {
+  post: {
+    id: string;
+    title: string;
+    excerpt: string;
+    content: string;
+    slug: string;
+    lastEdited: number;
+    author: {
+      name: string;
+      photo: string;
+      displayName: string;
+    };
+  };
+}
+
+const Post: React.FC<PostProps> = ({ post }) => {
+  const [user] = useAuthState(auth);
 
   return (
     <Container maxWidth="640px">
@@ -109,21 +172,12 @@ export default function Post({ post }) {
           url: `/${post.author.name}/${post.slug}`,
           type: 'article',
         })}
-
-        <link rel="manifest" href="https://www.justice.rest/justicerest.webmanifest" />
-        <meta name="mobile-web-app-capable" content="yes" />
-
-        <link
-          href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
-          rel="stylesheet"
-        />
-        <link
-          href="https://fonts.googleapis.com/css2?family=JetBrains+Mono&display=swap"
-          rel="stylesheet"
-        />
-
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>
       </Head>
+      <Script
+        src="https://cloud.umami.is/script.js"
+        data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"
+        strategy="afterInteractive"
+      />
 
       <h1
         css={css`
@@ -153,49 +207,69 @@ export default function Post({ post }) {
           `}
         />
         <p>
-          <Link href={`/${post.author.name}`} passHref 
-            css={css`
-              color: inherit;
-              text-decoration: none;
-              border-bottom: 1px dotted var(--grey-2);
-            `}
-          >
-            {post.author.displayName}
+          <Link href={`/${post.author.name}`} passHref>
+            <a
+              css={css`
+                color: inherit;
+                text-decoration: none;
+                border-bottom: 1px dotted var(--grey-2);
+              `}
+            >
+              {post.author.displayName}
+            </a>
           </Link>{' '}
           / <time>{formatDate(new Date(post.lastEdited))}</time>
         </p>
       </div>
 
       <PostContainer
-        dangerouslySetInnerHTML={{
-          __html: sanitize(post.content, {
-            allowedTags: sanitize.defaults.allowedTags.concat(['img']),
-          }),
-        }}
         css={css`
           margin-bottom: 5rem;
         `}
-      />
+      >
+        <div
+          dangerouslySetInnerHTML={{
+            __html: sanitize(post.content, {
+              allowedTags: sanitize.defaults.allowedTags.concat(['img']),
+            }),
+          }}
+        />
+      </PostContainer>
 
-      {user ? (
+      {user && (
         <footer>
           <AddToReadingListButton uid={user.uid} pid={post.id} />
         </footer>
-      ) : (
-        ''
       )}
     </Container>
-  )
-}
+  );
+};
 
-export async function getStaticPaths() {
+export default Post;
+
+export async function getStaticPaths(): Promise<{
+  paths: never[];
+  fallback: 'blocking';
+}> {
   return {
     paths: [],
     fallback: 'blocking',
   }
 }
 
-export async function getStaticProps({ params }) {
+interface StaticProps {
+  params: {
+    username: string;
+    slug: string;
+  }
+}
+
+export async function getStaticProps({ params }: StaticProps): Promise<{
+  props: { post: Post };
+  revalidate: number;
+} | {
+  notFound: true;
+}> {
   const { username, slug } = params
 
   try {
@@ -204,14 +278,24 @@ export async function getStaticProps({ params }) {
       return { notFound: true }
     }
     const userDoc = await firestore.collection('users').doc(post.author).get()
-    post.author = userDoc.data()
-    post.lastEdited = post.lastEdited.toDate().getTime()
+    const userData = userDoc.data()
+    if (!userData) {
+      throw new Error('User data not found')
+    }
+    post.author = {
+      name: userData.name,
+      displayName: userData.displayName,
+      photo: userData.photo
+    } as Author
+    post.lastEdited = post.lastEdited instanceof firebase.firestore.Timestamp
+      ? post.lastEdited.toDate().getTime()
+      : post.lastEdited
     return {
       props: { post },
       revalidate: 1,
     }
   } catch (err) {
-    console.log(err)
+    console.error(err)
     return { notFound: true }
   }
 }

@@ -7,9 +7,9 @@ import { useRouter } from 'next/router'
 import { htmlToText } from 'html-to-text'
 import { useAuthState } from 'react-firebase-hooks/auth'
 import { useCollectionData } from 'react-firebase-hooks/firestore'
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { DocumentData, Timestamp } from 'firebase/firestore'
 
-import { createPostForUser, filterExplorePosts } from '../../lib/db'
+import { createPostForUser } from '../../lib/db'
 import { firestore, auth } from '../../lib/firebase'
 
 import Button from '../../components/button'
@@ -21,18 +21,37 @@ import ProfileSettingsModal from '../../components/profile-settings-modal'
 import { truncate } from '../../lib/utils'
 import { getPostByID } from '../../lib/db'
 
+interface Author {
+  id: string;
+  name: string;
+  displayName: string;
+  photo: string;
+}
+
+interface Post extends DocumentData {
+  id: string;
+  title: string;
+  content: string;
+  excerpt?: string;
+  published: boolean;
+  author: string | Author;
+  slug: string;
+  lastEdited: Timestamp;
+}
+
 export default function Explore() {
   const router = useRouter()
 
   const [user, userLoading, userError] = useAuthState(auth);
-  const [initPosts, initPostsLoading, initPostsError] = useCollectionData(
+  const [initPosts, initPostsLoading, initPostsError] = useCollectionData<Post>(
     firestore.collection('posts')
     .where('published', '==', true)
     .where('title', '!=', '')
     .orderBy('title')
-    .limit(15),{ idField: 'id' },
+    .limit(15),
+    { idField: 'id' }
   )
-  const [explorePosts, setExplorePosts] = useState([]);
+  const [explorePosts, setExplorePosts] = useState<Post[]>([]);
 
   useEffect(() => {
     console.log(user, userLoading, userError)
@@ -45,38 +64,49 @@ export default function Explore() {
   // Set initial filteredPosts
   useEffect(() => {
     (async () => {
-        let posts = await setPostAuthorProfilePics(initPosts);
-        setExplorePosts(posts);
+        if (initPosts) {
+            let posts = await setPostAuthorProfilePics(initPosts);
+            setExplorePosts(posts);
+        }
     })()
-  }, initPosts)
+  }, [initPosts])
 
   // Set the profile pics for each author
-  const setPostAuthorProfilePics = async(filteredExplorePosts) => {
-    const postPromises = filteredExplorePosts?.map(async p => {
-      const post = await getPostByID(p.id)
-      const author = await firestore
+  const setPostAuthorProfilePics = async (filteredExplorePosts: Post[]): Promise<Post[]> => {
+    const postPromises = filteredExplorePosts.map(async (p: Post) => {
+      const post = await getPostByID(p.id);
+      const authorDoc = await firestore
         .collection('users')
         .doc(post.author)
-        .get()
-      post.author = author.data()
+        .get();
+      const authorData = authorDoc.data();
+      if (authorData) {
+        post.author = {
+          id: authorDoc.id,
+          name: authorData.name || '',
+          photo: authorData.photo || '',
+          displayName: authorData.displayName || ''
+        };
+      }
       return post;
-    })
-    const posts = postPromises ? await Promise.all(postPromises) : null
-    return posts
+    });
+    const posts = await Promise.all(postPromises);
+    return posts;
   }
 
   // Get the searchInput from Search component and do the global search on db
-  const getFilteredExplorePosts = async (searchInput) => {
-    let filteredExplorePosts = await filterExplorePosts(searchInput);
-    filteredExplorePosts = await setPostAuthorProfilePics(filteredExplorePosts);
-    setExplorePosts(filteredExplorePosts)
-    return filteredExplorePosts;
-  }
+  const getFilteredExplorePosts = async (searchInput: string): Promise<Post[]> => {
+    if (!initPosts) return [];
+    const filteredExplorePosts = initPosts.filter(post =>
+      post.title.toLowerCase().includes(searchInput.toLowerCase()) ||
+      post.content.toLowerCase().includes(searchInput.toLowerCase())
+    );
+    const postsWithAuthorPics = await setPostAuthorProfilePics(filteredExplorePosts);
+    setExplorePosts(postsWithAuthorPics);
+    return postsWithAuthorPics;
+  };
 
-    // Get the filtered posts from Search component
-    const getFilteredPosts = (fp) => {
-      setFilteredPosts(fp)
-    }
+// This function is no longer needed and has been removed
 
   return (
     <>
@@ -92,7 +122,14 @@ export default function Explore() {
 
           {/* Profile settings */}
           <Link href="#" onClick={() => console.log('Profile clicked')}>
-          <ProfileSettingsModal Trigger={() => <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M10.5 1.225a5.075 5.075 0 0 0-1.408 9.953c-1.672.203-3.105.794-4.186 1.859-1.375 1.354-2.071 3.371-2.071 6.003a.665.665 0 1 0 1.33 0c0-2.408.634-4.032 1.674-5.057 1.042-1.026 2.598-1.558 4.661-1.558s3.619.532 4.662 1.558c1.039 1.026 1.673 2.649 1.673 5.057a.665.665 0 1 0 1.33 0c0-2.632-.696-4.648-2.072-6.003-1.078-1.064-2.513-1.656-4.185-1.859A5.078 5.078 0 0 0 10.5 1.225M6.755 6.3a3.745 3.745 0 1 1 7.49 0 3.745 3.745 0 0 1-7.49 0" fill="currentColor" fill-rule="evenodd" clip-rule="evenodd"/></svg>} uid={user?.uid} />
+            <ProfileSettingsModal
+              Trigger={() => (
+                <svg width="21" height="21" viewBox="0 0 21 21" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10.5 1.225a5.075 5.075 0 0 0-1.408 9.953c-1.672.203-3.105.794-4.186 1.859-1.375 1.354-2.071 3.371-2.071 6.003a.665.665 0 1 0 1.33 0c0-2.408.634-4.032 1.674-5.057 1.042-1.026 2.598-1.558 4.661-1.558s3.619.532 4.662 1.558c1.039 1.026 1.673 2.649 1.673 5.057a.665.665 0 1 0 1.33 0c0-2.632-.696-4.648-2.072-6.003-1.078-1.064-2.513-1.656-4.185-1.859A5.078 5.078 0 0 0 10.5 1.225M6.755 6.3a3.745 3.745 0 1 1 7.49 0 3.745 3.745 0 0 1-7.49 0" fill="currentColor" fillRule="evenodd" clipRule="evenodd"/>
+                </svg>
+              )}
+              uid={user?.uid ?? ''}
+            />
           </Link>
 
           {/* Sign out */}
@@ -104,8 +141,8 @@ export default function Explore() {
 
       {userError ? (
         <>
-          <p>Oop, we&apos;ve had an error:</p>
-          <pre>{JSON.stringify(error)}</pre>
+          <p>Oops, we&apos;ve had an error:</p>
+          <pre>{JSON.stringify(userError)}</pre>
         </>
       ) : user ? (
         explorePosts && explorePosts.length > 0 ? (
@@ -133,13 +170,13 @@ export default function Explore() {
               height: 2.15em;
             `}
           >
-            <svg 
-            width="21" 
-            height="21" 
-            stroke-width="1.5" 
-            viewBox="0 0 24 24" 
-            fill="none" 
-            xmlns="http://www.w3.org/2000/svg" 
+            <svg
+            width="21"
+            height="21"
+            strokeWidth="1.5"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
             color="#ffffff"
               css={css`
                 margin: 0.2em 0 0 0.1em;
@@ -155,20 +192,16 @@ export default function Explore() {
                 }
               `}
             >
-            <path d="M3 15V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M15 3s-4.5 0-4.5 9H13c0 9 2 9 2 9" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
-            <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#ffffff" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M3 15V9a6 6 0 0 1 6-6h6a6 6 0 0 1 6 6v6a6 6 0 0 1-6 6H9a6 6 0 0 1-6-6" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M15 3s-4.5 0-4.5 9H13c0 9 2 9 2 9" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"/>
+            <path d="M16.5 14.5s-1.5 2-4.5 2-4.5-2-4.5-2M7 9v2m10-2v2" stroke="#ffffff" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </Button>
           <Search
-            posts={explorePosts}
+            posts={explorePosts.map(post => ({ title: post.title, content: post.content }))}
             isGlobalSearch={true}
             getSearchInput={getFilteredExplorePosts}
-            getFilteredPosts={getFilteredPosts}
-            css={css`
-              margin-left: 0em
-            `}
-          ></Search>
+          />
           </div>
           <ul
           css={css`
@@ -184,8 +217,8 @@ export default function Explore() {
         >
           {explorePosts.map(post => (
             <li key={post.id}>
-              <Link style={{textDecoration: 'none'}} href={`/${post.author.name}/${post.slug}`}>
-              <a style={{textDecoration: 'none', color: 'inherit'}}>
+              <Link style={{textDecoration: 'none'}} href={`/${post.author?.name || ''}/${post.slug || ''}`}>
+                <a style={{textDecoration: 'none', color: 'inherit'}}>
                   <h3
                     css={css`
                       font-size: 1rem;
@@ -206,16 +239,20 @@ export default function Explore() {
                       text-decoration: none;
                     `}
                   >
-                    <img
-                      src={post.author.photo}
-                      alt="Profile picture"
-                      css={css`
-                        width: 1.5rem;
-                        border-radius: 1rem;
-                        margin-right: 0.75rem;
-                      `}
-                    />
-                    <p style={{textDecoration: 'none', color: 'inherit'}}>{post.author.displayName}</p>
+                    {post.author && typeof post.author === 'object' && (
+                      <>
+                        <img
+                          src={post.author.photo}
+                          alt="Profile picture"
+                          css={css`
+                            width: 1.5rem;
+                            border-radius: 1rem;
+                            margin-right: 0.75rem;
+                          `}
+                        />
+                        <p style={{textDecoration: 'none', color: 'inherit'}}>{post.author.displayName}</p>
+                      </>
+                    )}
                   </div>
 
                   <p
@@ -246,7 +283,8 @@ export default function Explore() {
     </>
   )
 }
-Explore.getLayout = function Explore(page) {
+
+Explore.getLayout = function ExploreLayout(page: React.ReactNode) {
   return (
     <Container
       maxWidth="640px"
