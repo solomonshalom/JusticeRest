@@ -1,5 +1,5 @@
 /** @jsxImportSource @emotion/react */
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { css, SerializedStyles } from '@emotion/react'
 
 const inputStyles = css`
@@ -29,18 +29,23 @@ export default function Search({ isGlobalSearch, getSearchInput, posts, getFilte
   const searchBarPlaceholder = isGlobalSearch ? 'Search published posts...' : 'Search your posts...'
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
-    if (isGlobalSearch) {
-      if (event.key === 'Enter') {
-        console.log('do validate')
-        getSearchInput(searchInput);
-      }
+    if (isGlobalSearch && event.key === 'Enter') {
+      console.log('do validate')
+      getSearchInput(searchInput);
     }
   }
 
-  useEffect(() => {
+  const filterPosts = useCallback(() => {
     if (isGlobalSearch) {
-      // Do nothing for global search
-    } else {
+      console.log('Do global search')
+    } else if (posts && getFilteredPosts) {
+      let tempPosts = posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
+      getFilteredPosts(tempPosts);
+    }
+  }, [isGlobalSearch, posts, getFilteredPosts, searchInput]);
+
+  useEffect(() => {
+    if (!isGlobalSearch) {
       const delayDebounceFn = setTimeout(() => {
         if (posts) {
           filterPosts();
@@ -50,22 +55,9 @@ export default function Search({ isGlobalSearch, getSearchInput, posts, getFilte
 
       return () => clearTimeout(delayDebounceFn)
     }
-  }, [searchInput, isGlobalSearch, posts, getSearchInput])
+  }, [searchInput, isGlobalSearch, posts, getSearchInput, filterPosts])
 
-  const filterPosts = () => {
-    if (isGlobalSearch) {
-      console.log('Do global search')
-    } else if (posts && getFilteredPosts) {
-      let tempPosts = posts.filter(p => p.title.toLowerCase().includes(searchInput.toLowerCase()))
-      getFilteredPosts(tempPosts);
-    }
-  }
-
-  const exploreSearchBarStyles: SerializedStyles =
-    isGlobalSearch ?
-      css`width: 80%`    // Explore page search bar styles
-      :
-      css`width: 80%`     // Dashboard page search bar styles
+  const exploreSearchBarStyles: SerializedStyles = css`width: 80%`
 
   return (
     <div css={exploreSearchBarStyles}>
