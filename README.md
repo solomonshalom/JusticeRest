@@ -4,7 +4,7 @@ The official, ultra-minimal platform of JusticeRest! A platform to Speak Up, See
 
 ## Octoberfest
 
-In aticipation of octoberfest, few goals have been written down on the (issues)[https://github.com/solomonshalom/JusticeRest/issues/5] tab!
+In aticipation of octoberfest, few goals have been written down on the [issues](https://github.com/solomonshalom/JusticeRest/issues/5) tab!
 
 ## Installing
 
