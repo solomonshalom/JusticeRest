@@ -2,9 +2,9 @@
 
 The official, ultra-minimal platform of JusticeRest! A platform to Speak Up, Seek Change, and Inspire Justice!
 
-## Credits
+## Octoberfest
 
-Based on [Bublr](https://bublr.life)!
+In aticipation of octoberfest, few goals have been written down on the (issues)[https://github.com/solomonshalom/JusticeRest/issues/5] tab!
 
 ## Installing
 
