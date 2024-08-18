@@ -1,41 +1,49 @@
 /** @jsxImportSource @emotion/react */
 import Button from '../components/button';
 import firebase, { auth } from '../lib/firebase';
-import { setUser, userWithIDExists } from '../lib/db';
+import { setUser, userWithIDExists, User } from '../lib/db';
 import { css } from '@emotion/react';
 
-const AnonymousLoginButton = () => {
-  const avatarStyles = ['lorelei-neutral', 'lorelei', 'notionists', 'notionists-neutral'];
+const AnonymousLoginButton: React.FC = () => {
+  const avatarStyles: string[] = ['lorelei-neutral', 'lorelei', 'notionists', 'notionists-neutral'];
 
-  const generateRandomSeed = () => {
+  const generateRandomSeed = (): string => {
     return Math.floor(Math.random() * 1000000).toString();
   };
 
-  const getRandomStyle = () => {
+  const getRandomStyle = (): string => {
     const randomIndex = Math.floor(Math.random() * avatarStyles.length);
     return avatarStyles[randomIndex];
   };
 
-  const handleAnonymousLogin = async () => {
+  const handleAnonymousLogin = async (): Promise<void> => {
     const randomSeed = generateRandomSeed();
     const randomStyle = getRandomStyle();
 
-    auth.signInAnonymously().then(async (cred) => {
+    try {
+      const cred = await auth.signInAnonymously();
+      if (!cred.user) {
+        throw new Error('User object is null after anonymous sign-in');
+      }
+
       const userExists = await userWithIDExists(cred.user.uid);
 
       if (!userExists) {
-        // Create a new user with the generated avatar seed and style
-        await setUser(cred.user.uid, {
+        const userData: Partial<User> = {
           name: cred.user.uid,
           displayName: 'Anonymous',
-          about: 'Hii, change this text to add your very own little bio!',
-          posts: [],
-          readingList: [],
-          // Everytime a new anonymous user creates an account, the below API will create a randomized PFP for them.
+          posts: [], // This is correct as User.posts is defined as string[]
           photo: `https://api.dicebear.com/7.x/${randomStyle}/svg?seed=${randomSeed}`,
-        });
+          about: 'Hii, change this text to add your very own little bio!',
+          readingList: [],
+        };
+
+        await setUser(cred.user.uid, userData);
       }
-    });
+    } catch (error) {
+      console.error('Error during anonymous sign-in:', error);
+      // You might want to show an error message to the user here
+    }
   };
 
   return (
@@ -56,7 +64,7 @@ const AnonymousLoginButton = () => {
 
       /* Adding the shadow effect */
       box-shadow: 0px 4px 1px #a3a3a3;
-      
+
       &:hover {
         background: var(--grey-4);
       }

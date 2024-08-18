@@ -1,5 +1,6 @@
 /** @jsxImportSource @emotion/react */
-import { css } from '@emotion/react'
+import React from 'react';
+import { css } from '@emotion/react';
 
 const inputStyles = css`
   display: block;
@@ -14,18 +15,22 @@ const inputStyles = css`
   &::placeholder {
     color: var(--grey-3);
   }
-`
+`;
 
-const Input = props => (
+interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {}
+
+const Input: React.FC<InputProps> = (props) => (
   <input
     {...props}
     css={css`
       ${inputStyles}
     `}
   />
-)
+);
 
-export const Textarea = props => (
+interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
+
+export const Textarea: React.FC<TextareaProps> = (props) => (
   <textarea
     {...props}
     css={css`
@@ -35,6 +40,6 @@ export const Textarea = props => (
       padding-top: 1em;
     `}
   />
-)
+);
 
-export default Input
+export default Input;

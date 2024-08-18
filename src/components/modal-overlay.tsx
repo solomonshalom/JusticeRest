@@ -1,4 +1,5 @@
 /** @jsxImportSource @emotion/react */
+import React from 'react';
 import { css, keyframes } from '@emotion/react'
 import { Overlay } from '@radix-ui/react-dialog'
 
@@ -12,7 +13,11 @@ const fadeIn = keyframes`
     }
 `
 
-const ModalOverlay = props => (
+interface ModalOverlayProps {
+  [key: string]: any; // Allow any additional props
+}
+
+const ModalOverlay: React.FC<ModalOverlayProps> = (props) => (
   <Overlay
     css={css`
       background: rgba(0, 0, 0, 0.2);

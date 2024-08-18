@@ -11,12 +11,37 @@ import { getUserByName } from '../../lib/db'
 import meta from '../../components/meta'
 import Container from '../../components/container'
 
-function formatDate(date) {
-  const options = { day: 'numeric', month: 'long', year: 'numeric' };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+import firebase from 'firebase/app';
+
+interface User {
+  id: string;
+  name: string;
+  displayName: string;
+  about: string;
+  photo: string;
+  posts: Post[];
+  readingList: string[];
 }
 
-export default function Profile({ user }) {
+interface Post {
+  id: string;
+  title: string;
+  slug: string;
+  content: string;
+  excerpt?: string;
+  lastEdited: firebase.firestore.Timestamp;
+  published: boolean;
+  author: string;
+  category?: string;
+}
+
+function formatDate(date: firebase.firestore.Timestamp | number): string {
+  const options: Intl.DateTimeFormatOptions = { day: 'numeric', month: 'long', year: 'numeric' };
+  const dateValue = date instanceof firebase.firestore.Timestamp ? date.toDate() : new Date(date);
+  return new Intl.DateTimeFormat('en-US', options).format(dateValue);
+}
+
+export default function Profile({ user }: { user: User }) {
   return (
     <Container maxWidth="640px">
       <Head>
@@ -34,9 +59,12 @@ export default function Profile({ user }) {
           href="https://fonts.googleapis.com/css2?family=Newsreader:ital,wght@0,400;0,600;1,400;1,600&display=swap"
           rel="stylesheet"
         />
-
-<script defer src="https://cloud.umami.is/script.js" data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"></script>  
       </Head>
+      <Script
+        src="https://cloud.umami.is/script.js"
+        data-website-id="a0cdb368-20ae-4630-8949-ac57917e2ae3"
+        strategy="afterInteractive"
+      />
 
       <img
         src={user.photo}
@@ -146,32 +174,40 @@ export default function Profile({ user }) {
   )
 }
 
-export async function getStaticPaths() {
+export async function getStaticPaths(): Promise<{
+  paths: never[];
+  fallback: 'blocking';
+}> {
   return {
     paths: [],
     fallback: 'blocking',
   }
 }
 
-export async function getStaticProps({ params }) {
-  const { username } = params
+export async function getStaticProps({ params }: { params: { username: string } }): Promise<{ props: { user: User }; revalidate: number } | { notFound: boolean }> {
+  const { username } = params;
 
   try {
-    const user = await getUserByName(username)
+    const user = await getUserByName(username);
     user.posts = user.posts.map(p => ({
       ...p,
-      lastEdited: p.lastEdited.toDate().getTime(),
-    }))
+      lastEdited: p.lastEdited instanceof firebase.firestore.Timestamp
+        ? p.lastEdited.toDate().getTime()
+        : p.lastEdited,
+    }));
     user.posts.sort((a, b) => {
-      return b.lastEdited - a.lastEdited
-    })
-    user.posts = user.posts.filter(p => p.published)
+      const aTime = typeof a.lastEdited === 'number' ? a.lastEdited : a.lastEdited.toDate().getTime();
+      const bTime = typeof b.lastEdited === 'number' ? b.lastEdited : b.lastEdited.toDate().getTime();
+      return bTime - aTime;
+    });
+    user.posts = user.posts.filter(p => p.published);
+
     return {
-      props: { user },
+      props: { user: JSON.parse(JSON.stringify(user)) },
       revalidate: 1,
-    }
+    };
   } catch (err) {
-    console.log(err)
-    return { notFound: true }
+    console.error('Error fetching user data:', err);
+    return { notFound: true };
   }
 }

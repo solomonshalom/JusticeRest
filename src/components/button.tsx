@@ -1,6 +1,7 @@
 /** @jsxImportSource @emotion/react */
 import Link from 'next/link'
 import { css } from '@emotion/react'
+import React, { ReactNode } from 'react'
 
 const buttonStyles = css`
   display: block;
@@ -51,49 +52,58 @@ const outlineButtonStyles = css`
   }
 `
 
-export default function Button(props) {
-  if (props.outline) {
-    let { outline, ...rest } = props
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  outline?: boolean;
+  children: ReactNode;
+}
 
+export default function Button({ outline, children, ...rest }: ButtonProps) {
+  if (outline) {
     return (
       <button css={outlineButtonStyles} {...rest}>
-        {props.children}
+        {children}
       </button>
     )
   }
   return (
-    <button css={buttonStyles} {...props}>
-      {props.children}
+    <button css={buttonStyles} {...rest}>
+      {children}
     </button>
   )
 }
 
-export function LinkButton(props) {
-  if (props.outline) {
-    let { outline, ...rest } = props
+interface LinkButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  outline?: boolean;
+  href: string;
+  children: ReactNode;
+}
 
+export function LinkButton({ outline, href, children, ...rest }: LinkButtonProps) {
+  if (outline) {
     return (
-      <Link {...rest}>
+      <Link href={href}>
         <a
           css={css`
             ${outlineButtonStyles}
             display: inline-block;
           `}
+          {...rest}
         >
-          {props.children}
+          {children}
         </a>
       </Link>
     )
   }
   return (
-    <Link {...props}>
+    <Link href={href}>
       <a
         css={css`
           ${buttonStyles}
           display: inline-block;
         `}
+        {...rest}
       >
-        {props.children}
+        {children}
       </a>
     </Link>
   )
@@ -128,7 +138,11 @@ const iconButtonStyles = css`
   }
 `
 
-export function IconButton(props) {
+interface IconButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  children: ReactNode;
+}
+
+export function IconButton({ children, ...props }: IconButtonProps) {
   return (
     <button
       css={css`
@@ -136,14 +150,19 @@ export function IconButton(props) {
       `}
       {...props}
     >
-      {props.children}
+      {children}
     </button>
   )
 }
 
-export function LinkIconButton(props) {
+interface LinkIconButtonProps extends React.AnchorHTMLAttributes<HTMLAnchorElement> {
+  href: string;
+  children: ReactNode;
+}
+
+export function LinkIconButton({ href, children, ...props }: LinkIconButtonProps) {
   return (
-    <Link {...props}>
+    <Link href={href}>
       <a
         css={css`
           ${iconButtonStyles}
@@ -151,7 +170,7 @@ export function LinkIconButton(props) {
         `}
         {...props}
       >
-        {props.children}
+        {children}
       </a>
     </Link>
   )
