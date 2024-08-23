@@ -1,6 +1,6 @@
 # JusticeRest
 
-The official, ultra-minimal platform of JusticeRest! A platform to Speak Up, Seek Change, and Inspire Justice!
+A platform to Speak Up, Seek Change, and Inspire Justice!
 
 ## Octoberfest
 
