@@ -37,8 +37,13 @@ export default function Home() {
             margin-bottom: 1rem;
           }
 
-          width: 200px;
-          height: 200px;
+          @media (prefers-color-scheme: dark) {
+            path {
+              stroke: white;
+            }
+
+          width: 150px;
+          height: 150px;
 
           background-image: url('/images/logo.svg');
           background-position: center;
