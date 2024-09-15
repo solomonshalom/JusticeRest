@@ -40,7 +40,7 @@ export default function Home() {
           width: 200px;
           height: 200px;
 
-          background-image: url('/images/logo.png');
+          background-image: url('/images/logo.svg');
           background-position: center;
           background-repeat: no-repeat;
           background-size: contain;
@@ -53,7 +53,7 @@ export default function Home() {
           margin-bottom: 1.5rem;
         `}
       >
-        JusticeRest
+        Login
       </h1>
       <ul
         css={css`
